@@ -1,0 +1,11 @@
+{
+  "name": "trash_notification",
+  "version": "0.0.0",
+  "description": "ゴミ出しに役立つ、ダメ人間のダメ人間によるダメ人間のためのアプリ",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "butaosuinu",
+  "license": "MIT"
+}
