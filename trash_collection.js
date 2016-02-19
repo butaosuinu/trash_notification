@@ -1,10 +1,19 @@
+var $ = require('jquery');
+var moment = require('moment');
+
 trashCollection();
 
 function trashCollection() {
 	var today = new Date();
+	var m = moment();
 
-	$('#today').html(today.toDateString() + ' Time : ' + today.toLocaleTimeString());
-	$('#today-day').html("今日は" + todayDay(today) + "ですよー！！");
+
+	var interval = setInterval(function() {
+		var m = moment();
+		$('#today').html(m.format('YYYY年MM月DD日 HH:mm:ss dddd'));
+	},1000);
+
+	$('#today-day').html("今日は" + m.format('dddd') + "ですよー！！");
 	todayTrash(today);
 }
 
