@@ -7,11 +7,17 @@
 
 ## Requirement  
 
+### bulid tool  
+- electron  
+- browserify  
+
 ## Usage  
 
 `git clone`  
   
 `npm install`  
+
+`npm run build`  
 
 ## Licence
 
