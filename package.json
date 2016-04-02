@@ -4,7 +4,7 @@
   "description": "ゴミ出しに役立つ、ダメ人間のダメ人間によるダメ人間のためのアプリ",
   "main": "main.js",
   "scripts": {
-    "build": "browserify trash_collection.js > asset/trash_collection.js"
+    "build": "webpack trash_collection.js asset/trash_collection.js"
   },
   "author": "butaosuinu",
   "license": "MIT",
