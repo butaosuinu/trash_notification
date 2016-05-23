@@ -4,17 +4,19 @@ var moment = require('./node_modules/moment/min/moment-with-locales.js');
 trashCollection();
 
 function trashCollection() {
-	var today = new Date();
 	moment.locale('ja');
 	var m = moment();
 
-	var interval = setInterval(function() {
-		var m = moment();
-		$('#today').html(m.format('YYYY年MM月DD日 HH:mm:ss dddd'));
-	},1000);
+	updateTime();
+	setInterval(updateTime, 1000);
 
 	$('#today-day').html("今日は" + m.format('dddd') + "ですよー！！");
 	todayTrash(m);
+}
+
+function updateTime() {
+	var m = moment();
+	$('#today').html(m.format('YYYY年MM月DD日 HH:mm:ss dddd'));
 }
 
 // ゴミの日を外部から読み込み
@@ -27,25 +29,10 @@ function todayTrash(m) {
 }
 
 function renderTrashText(trash) {
-	var trashIcon;
-	switch (trash) {
-		case "燃えるゴミ" :
-			trashIcon = "image/burn.png";
-			break;
-		case "資源ゴミ":
-			trashIcon = "image/re.png";
-			break;
-		case "ペットボトル":
-			trashIcon = "image/pet.png";
-			break;
-		default:
-			break;
-	}
-
-	if (trash === "") {
+	if ("" === trash.name || undefined === trash.name) {
 		$('#today-trash').html("今日のゴミ回収はありません");
 	} else {
-		$('#trash-icon').html('<img src="' + trashIcon + '"/>');
-		$('#today-trash').html(trash);
+		$('#trash-icon').html('<img src="' + trash.icon + '"/>');
+		$('#today-trash').html(trash.name);
 	}
 }
