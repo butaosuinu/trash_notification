@@ -11,8 +11,8 @@
   "devDependencies": {
   },
   "dependencies": {
-    "fullcalendar": "^2.6.1",
-    "jquery": "^2.2.0",
+    "fullcalendar": "^3.8.0",
+    "jquery": "^3.3.1",
     "moment": "^2.11.2"
   }
 }
