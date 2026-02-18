@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "warn"
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-debugger": "error",
+    "eqeqeq": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "unicorn/no-useless-undefined": "off",
+    "max-lines-per-function": ["warn", { "max": 50 }],
+    "max-nested-callbacks": ["warn", { "max": 3 }],
+    "max-depth": ["warn", { "max": 4 }],
+    "react/react-in-jsx-scope": "off"
+  },
+  "ignorePatterns": ["node_modules/", "out/", "dist/"],
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/__tests__/**/*.ts", "**/__tests__/**/*.tsx"],
+      "rules": {
+        "max-lines-per-function": "off"
+      }
+    }
+  ]
+}
