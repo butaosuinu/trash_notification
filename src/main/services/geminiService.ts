@@ -1,9 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import * as fs from "node:fs";
 import { randomUUID } from "node:crypto";
-import { migrateV1ToV2, type TrashSchedule } from "./scheduleStore";
-
-const SCHEDULE_VERSION = 2;
+import { migrateV1ToV2, SCHEDULE_VERSION, type TrashSchedule } from "./scheduleStore";
 
 const EXTRACTION_PROMPT = `これは日本の自治体が配布しているゴミ収集カレンダーのPDFです。
 ゴミ回収スケジュールを抽出してください。

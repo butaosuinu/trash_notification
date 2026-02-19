@@ -1,4 +1,4 @@
-import type { ScheduleRule, NthWeekdayRule } from "../../types/schedule";
+import type { ScheduleRule, BiweeklyRule, NthWeekdayRule } from "../../types/schedule";
 import { DAY_NAMES, RULE_TYPE_LABELS, WEEK_NUMBER_LABELS } from "../../constants/schedule";
 import { DateListEditor } from "./DateListEditor";
 
@@ -65,6 +65,68 @@ function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
   );
 }
 
+type BiweeklyFieldsProps = { rule: BiweeklyRule; onChange: (rule: ScheduleRule) => void };
+
+function BiweeklyFields({ rule, onChange }: BiweeklyFieldsProps) {
+  return (
+    <div className="flex items-center gap-2">
+      <DayOfWeekSelect
+        value={rule.dayOfWeek}
+        onChange={(v) => {
+          onChange({ ...rule, dayOfWeek: v });
+        }}
+      />
+      <input
+        type="date"
+        value={rule.referenceDate}
+        onChange={(e) => {
+          onChange({ ...rule, referenceDate: e.target.value });
+        }}
+        className={INPUT_CLASS}
+      />
+    </div>
+  );
+}
+
+type RuleFieldsProps = { rule: ScheduleRule; onChange: (rule: ScheduleRule) => void };
+
+function RuleFields({ rule, onChange }: RuleFieldsProps) {
+  switch (rule.type) {
+    case "weekly":
+      return (
+        <DayOfWeekSelect
+          value={rule.dayOfWeek}
+          onChange={(v) => {
+            onChange({ ...rule, dayOfWeek: v });
+          }}
+        />
+      );
+    case "biweekly":
+      return <BiweeklyFields rule={rule} onChange={onChange} />;
+    case "nthWeekday":
+      return (
+        <div className="space-y-1">
+          <DayOfWeekSelect
+            value={rule.dayOfWeek}
+            onChange={(v) => {
+              onChange({ ...rule, dayOfWeek: v });
+            }}
+          />
+          <WeekNumberPicker rule={rule} onChange={onChange} />
+        </div>
+      );
+    case "specificDates":
+      return (
+        <DateListEditor
+          dates={rule.dates}
+          onChange={(dates) => {
+            onChange({ ...rule, dates });
+          }}
+        />
+      );
+  }
+}
+
 type RuleEditorProps = { rule: ScheduleRule; onChange: (rule: ScheduleRule) => void };
 
 export function RuleEditor({ rule, onChange }: RuleEditorProps) {
@@ -92,51 +154,7 @@ export function RuleEditor({ rule, onChange }: RuleEditorProps) {
           </option>
         ))}
       </select>
-      {rule.type === "weekly" && (
-        <DayOfWeekSelect
-          value={rule.dayOfWeek}
-          onChange={(v) => {
-            onChange({ ...rule, dayOfWeek: v });
-          }}
-        />
-      )}
-      {rule.type === "biweekly" && (
-        <div className="flex items-center gap-2">
-          <DayOfWeekSelect
-            value={rule.dayOfWeek}
-            onChange={(v) => {
-              onChange({ ...rule, dayOfWeek: v });
-            }}
-          />
-          <input
-            type="date"
-            value={rule.referenceDate}
-            onChange={(e) => {
-              onChange({ ...rule, referenceDate: e.target.value });
-            }}
-            className={INPUT_CLASS}
-          />
-        </div>
-      )}
-      {rule.type === "nthWeekday" && (
-        <div className="space-y-1">
-          <DayOfWeekSelect
-            value={rule.dayOfWeek}
-            onChange={(v) => {
-              onChange({ ...rule, dayOfWeek: v });
-            }}
-          />
-          <WeekNumberPicker rule={rule} onChange={onChange} />
-        </div>
-      )}
-      {rule.type === "specificDates" && (
-        <DateListEditor
-          dates={rule.dates}
-          onChange={(dates) => {
-            onChange({ ...rule, dates });
-          }}
-        />
-      )}
+      <RuleFields rule={rule} onChange={onChange} />
     </div>
   );
 }

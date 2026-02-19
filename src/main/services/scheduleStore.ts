@@ -30,7 +30,12 @@ type StoreSchema = {
   apiKey: string | null;
 };
 
-const SCHEDULE_VERSION = 2;
+export const SCHEDULE_VERSION = 2;
+
+const TUESDAY = 2;
+const WEDNESDAY = 3;
+const THURSDAY = 4;
+const FRIDAY = 5;
 
 function isV2Schedule(data: unknown): data is TrashSchedule {
   return (
@@ -56,27 +61,27 @@ export function migrateV1ToV2(v1: TrashScheduleV1): TrashSchedule {
 }
 
 const DEFAULT_SCHEDULE: TrashSchedule = {
-  version: 2,
+  version: SCHEDULE_VERSION,
   entries: [
     {
       id: randomUUID(),
       trash: { name: "燃えるゴミ", icon: "burn" },
-      rule: { type: "weekly", dayOfWeek: 2 },
+      rule: { type: "weekly", dayOfWeek: TUESDAY },
     },
     {
       id: randomUUID(),
       trash: { name: "ビン・缶・ペットボトル", icon: "bottle" },
-      rule: { type: "weekly", dayOfWeek: 3 },
+      rule: { type: "weekly", dayOfWeek: WEDNESDAY },
     },
     {
       id: randomUUID(),
       trash: { name: "資源ゴミ", icon: "recycle" },
-      rule: { type: "weekly", dayOfWeek: 4 },
+      rule: { type: "weekly", dayOfWeek: THURSDAY },
     },
     {
       id: randomUUID(),
       trash: { name: "燃えるゴミ", icon: "burn" },
-      rule: { type: "weekly", dayOfWeek: 5 },
+      rule: { type: "weekly", dayOfWeek: FRIDAY },
     },
   ],
 };

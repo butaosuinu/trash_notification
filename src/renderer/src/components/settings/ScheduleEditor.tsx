@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { useSchedule } from "../../hooks/useSchedule";
 import { TRASH_ICONS, SAVE_FEEDBACK_DELAY_MS } from "../../constants/schedule";
 import type { ScheduleEntry, ScheduleRule } from "../../types/schedule";
+import { SCHEDULE_VERSION } from "../../types/schedule";
 import { RuleEditor } from "./RuleEditor";
-
-const SCHEDULE_VERSION = 2;
 const ICON_OPTIONS = ["", ...Object.keys(TRASH_ICONS)];
 
 function createEmptyEntry(): ScheduleEntry {
@@ -22,6 +21,64 @@ type EntryRowProps = {
   onRuleChange: (rule: ScheduleRule) => void;
   onRemove: () => void;
 };
+
+type ScheduleActionsProps = {
+  onAdd: () => void;
+  onSave: () => void;
+  saved: boolean;
+};
+
+function ScheduleActions({ onAdd, onSave, saved }: ScheduleActionsProps) {
+  return (
+    <div className="mt-3 flex gap-2">
+      <button
+        type="button"
+        onClick={onAdd}
+        className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
+      >
+        エントリーを追加
+      </button>
+      <button
+        type="button"
+        onClick={onSave}
+        className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+      >
+        {saved ? "保存済み" : "保存"}
+      </button>
+    </div>
+  );
+}
+
+type ScheduleEntryListProps = {
+  entries: ScheduleEntry[];
+  onUpdate: (id: string, updater: (e: ScheduleEntry) => ScheduleEntry) => void;
+  onRemove: (id: string) => void;
+};
+
+function ScheduleEntryList({ entries, onUpdate, onRemove }: ScheduleEntryListProps) {
+  return (
+    <div className="space-y-3">
+      {entries.map((entry) => (
+        <EntryRow
+          key={entry.id}
+          entry={entry}
+          onNameChange={(name) => {
+            onUpdate(entry.id, (e) => ({ ...e, trash: { ...e.trash, name } }));
+          }}
+          onIconChange={(icon) => {
+            onUpdate(entry.id, (e) => ({ ...e, trash: { ...e.trash, icon } }));
+          }}
+          onRuleChange={(rule) => {
+            onUpdate(entry.id, (e) => ({ ...e, rule }));
+          }}
+          onRemove={() => {
+            onRemove(entry.id);
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }: EntryRowProps) {
   return (
@@ -86,46 +143,22 @@ export function ScheduleEditor() {
   return (
     <div className="rounded-lg bg-white p-4 shadow">
       <h3 className="mb-2 text-sm font-medium text-gray-500">スケジュール編集</h3>
-      <div className="space-y-3">
-        {entries.map((entry) => (
-          <EntryRow
-            key={entry.id}
-            entry={entry}
-            onNameChange={(name) => {
-              updateEntry(entry.id, (e) => ({ ...e, trash: { ...e.trash, name } }));
-            }}
-            onIconChange={(icon) => {
-              updateEntry(entry.id, (e) => ({ ...e, trash: { ...e.trash, icon } }));
-            }}
-            onRuleChange={(rule) => {
-              updateEntry(entry.id, (e) => ({ ...e, rule }));
-            }}
-            onRemove={() => {
-              setEntries((prev) => prev.filter((e) => e.id !== entry.id));
-            }}
-          />
-        ))}
-      </div>
-      <div className="mt-3 flex gap-2">
-        <button
-          type="button"
-          onClick={() => {
-            setEntries((prev) => [...prev, createEmptyEntry()]);
-          }}
-          className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
-        >
-          エントリーを追加
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            void handleSave();
-          }}
-          className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
-        >
-          {saved ? "保存済み" : "保存"}
-        </button>
-      </div>
+      <ScheduleEntryList
+        entries={entries}
+        onUpdate={updateEntry}
+        onRemove={(id) => {
+          setEntries((prev) => prev.filter((e) => e.id !== id));
+        }}
+      />
+      <ScheduleActions
+        onAdd={() => {
+          setEntries((prev) => [...prev, createEmptyEntry()]);
+        }}
+        onSave={() => {
+          void handleSave();
+        }}
+        saved={saved}
+      />
     </div>
   );
 }

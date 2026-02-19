@@ -43,7 +43,7 @@ export type ScheduleEntry = {
 
 // --- V2 (current format) ---
 
-const SCHEDULE_VERSION = 2;
+export const SCHEDULE_VERSION = 2;
 
 export type TrashScheduleV2 = {
   version: typeof SCHEDULE_VERSION;
