@@ -10,8 +10,32 @@ export const DAY_NAMES = [
 
 export const TRASH_ICONS: Record<string, string> = {
   burn: "🔥",
+  nonburn: "🗑️",
   recycle: "♻️",
+  plastic: "🧴",
   bottle: "🍾",
+  can: "🥫",
+  paper: "📰",
+  cloth: "👕",
+  oversized: "🛋️",
+  hazardous: "⚠️",
+  battery: "🔋",
+  other: "📦",
+};
+
+export const TRASH_ICON_LABELS: Record<string, string> = {
+  burn: "燃えるゴミ",
+  nonburn: "燃えないゴミ",
+  recycle: "資源ゴミ",
+  plastic: "プラスチック",
+  bottle: "ビン",
+  can: "缶",
+  paper: "古紙・ダンボール",
+  cloth: "古布・衣類",
+  oversized: "粗大ゴミ",
+  hazardous: "有害ゴミ",
+  battery: "乾電池",
+  other: "その他",
 };
 
 export const RULE_TYPE_LABELS: Record<string, string> = {

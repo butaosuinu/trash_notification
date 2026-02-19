@@ -16,15 +16,19 @@ const EXTRACTION_PROMPT = `これは日本の自治体が配布しているゴ�
 {
   "version": 2,
   "entries": [
-    { "trash": { "name": "燃えるゴミ", "icon": "" }, "rule": { "type": "weekly", "dayOfWeek": 2 } },
-    { "trash": { "name": "資源ゴミ", "icon": "" }, "rule": { "type": "nthWeekday", "dayOfWeek": 3, "weekNumbers": [1, 3] } },
-    { "trash": { "name": "粗大ゴミ", "icon": "" }, "rule": { "type": "specificDates", "dates": ["2026-03-15", "2026-04-19"] } }
+    { "trash": { "name": "燃えるゴミ", "icon": "burn" }, "rule": { "type": "weekly", "dayOfWeek": 2 } },
+    { "trash": { "name": "資源ゴミ", "icon": "recycle" }, "rule": { "type": "nthWeekday", "dayOfWeek": 3, "weekNumbers": [1, 3] } },
+    { "trash": { "name": "粗大ゴミ", "icon": "oversized" }, "rule": { "type": "specificDates", "dates": ["2026-03-15", "2026-04-19"] } }
   ]
 }
 
 注意:
 - nameにはゴミの種類を日本語で記載してください
-- iconは空文字列のままにしてください
+- iconには以下のキーから最も適切なものを設定してください:
+  burn=燃えるゴミ/可燃ゴミ, nonburn=燃えないゴミ/不燃ゴミ, recycle=資源ゴミ/リサイクル,
+  plastic=プラスチック/プラ容器, bottle=ビン/ガラスびん, can=缶/アルミ缶/スチール缶,
+  paper=古紙/新聞/雑誌/ダンボール, cloth=古布/衣類, oversized=粗大ゴミ/大型ゴミ,
+  hazardous=有害ゴミ/蛍光管/水銀, battery=乾電池/電池, other=上記に該当しないもの
 - 同じゴミの種類が複数の曜日で回収される場合、曜日ごとに別エントリーにしてください
 - JSONのみを返し、説明は不要です`;
 
