@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSchedule } from "../../hooks/useSchedule";
-import { TRASH_ICONS, SAVE_FEEDBACK_DELAY_MS } from "../../constants/schedule";
+import { TRASH_ICONS, TRASH_ICON_LABELS, SAVE_FEEDBACK_DELAY_MS } from "../../constants/schedule";
 import type { ScheduleEntry, ScheduleRule } from "../../types/schedule";
 import { SCHEDULE_VERSION } from "../../types/schedule";
 import { RuleEditor } from "./RuleEditor";
@@ -102,7 +102,7 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
         >
           {ICON_OPTIONS.map((iconKey) => (
             <option key={iconKey} value={iconKey}>
-              {iconKey === "" ? "なし" : `${TRASH_ICONS[iconKey]} ${iconKey}`}
+              {iconKey === "" ? "なし" : `${TRASH_ICONS[iconKey]} ${TRASH_ICON_LABELS[iconKey]}`}
             </option>
           ))}
         </select>
