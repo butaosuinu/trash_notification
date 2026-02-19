@@ -49,7 +49,7 @@ export async function extractScheduleFromPdf(
   const base64Data = pdfBuffer.toString("base64");
 
   const response = await client.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-3-flash-preview",
     contents: [
       {
         role: "user",
