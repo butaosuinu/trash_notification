@@ -4,13 +4,29 @@ import { WeeklySchedule } from "../WeeklySchedule";
 import type { TrashSchedule } from "../../../types/schedule";
 
 const mockSchedule: TrashSchedule = {
-  "0": { name: "", icon: "" },
-  "1": { name: "", icon: "" },
-  "2": { name: "燃えるゴミ", icon: "burn" },
-  "3": { name: "ビン・缶・ペットボトル", icon: "bottle" },
-  "4": { name: "資源ゴミ", icon: "recycle" },
-  "5": { name: "燃えるゴミ", icon: "burn" },
-  "6": { name: "", icon: "" },
+  version: 2,
+  entries: [
+    {
+      id: "1",
+      trash: { name: "燃えるゴミ", icon: "burn" },
+      rule: { type: "weekly", dayOfWeek: 2 },
+    },
+    {
+      id: "2",
+      trash: { name: "ビン・缶・ペットボトル", icon: "bottle" },
+      rule: { type: "weekly", dayOfWeek: 3 },
+    },
+    {
+      id: "3",
+      trash: { name: "資源ゴミ", icon: "recycle" },
+      rule: { type: "weekly", dayOfWeek: 4 },
+    },
+    {
+      id: "4",
+      trash: { name: "燃えるゴミ", icon: "burn" },
+      rule: { type: "weekly", dayOfWeek: 5 },
+    },
+  ],
 };
 
 describe("WeeklySchedule", () => {

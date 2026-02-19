@@ -1,5 +1,5 @@
-import { getDay } from "date-fns";
 import { useSchedule } from "../../hooks/useSchedule";
+import { getTodayEntries } from "../../utils/scheduleMatch";
 import { DateTimeDisplay } from "./DateTimeDisplay";
 import { TrashInfo } from "./TrashInfo";
 import { WeeklySchedule } from "./WeeklySchedule";
@@ -10,8 +10,7 @@ type DashboardProps = {
 
 export function Dashboard({ onOpenSettings }: DashboardProps) {
   const { schedule } = useSchedule();
-  const todayIndex = String(getDay(new Date()));
-  const todayTrash = schedule[todayIndex];
+  const todayEntries = getTodayEntries(new Date(), schedule.entries);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-100 p-4">
@@ -28,7 +27,7 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
 
       <div className="space-y-4">
         <DateTimeDisplay />
-        <TrashInfo day={todayTrash} />
+        <TrashInfo entries={todayEntries} />
         <WeeklySchedule schedule={schedule} />
       </div>
     </div>
