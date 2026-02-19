@@ -1,42 +1,68 @@
 import { GoogleGenAI } from "@google/genai";
 import * as fs from "node:fs";
+import { randomUUID } from "node:crypto";
+import { migrateV1ToV2, type TrashSchedule } from "./scheduleStore";
 
-type TrashDay = {
-  name: string;
-  icon: string;
-};
-
-type TrashSchedule = Record<string, TrashDay>;
+const SCHEDULE_VERSION = 2;
 
 const EXTRACTION_PROMPT = `これは日本の自治体が配布しているゴミ収集カレンダーのPDFです。
-曜日ごとのゴミ回収スケジュールを抽出してください。
+ゴミ回収スケジュールを抽出してください。
 
-各曜日（0=日曜日〜6=土曜日）について、回収されるゴミの種類を特定してください。
-回収がない日は空文字列を使用してください。
+各ゴミの種類について、回収パターンを判定し、以下のルール種別を使い分けてください:
+- "weekly": 毎週同じ曜日に回収（dayOfWeek: 0=日曜〜6=土曜）
+- "biweekly": 隔週回収（dayOfWeek + referenceDate: 回収日のひとつをYYYY-MM-DD形式で）
+- "nthWeekday": 第N曜日に回収（dayOfWeek + weekNumbers: [1,3] のように第何週かの配列）
+- "specificDates": 不規則な日付で回収（dates: ["YYYY-MM-DD", ...] の配列）
 
 以下の形式の有効なJSONのみを返してください:
 {
-  "0": { "name": "", "icon": "" },
-  "1": { "name": "", "icon": "" },
-  "2": { "name": "燃えるゴミ", "icon": "" },
-  "3": { "name": "", "icon": "" },
-  "4": { "name": "", "icon": "" },
-  "5": { "name": "", "icon": "" },
-  "6": { "name": "", "icon": "" }
+  "version": 2,
+  "entries": [
+    { "trash": { "name": "燃えるゴミ", "icon": "" }, "rule": { "type": "weekly", "dayOfWeek": 2 } },
+    { "trash": { "name": "資源ゴミ", "icon": "" }, "rule": { "type": "nthWeekday", "dayOfWeek": 3, "weekNumbers": [1, 3] } },
+    { "trash": { "name": "粗大ゴミ", "icon": "" }, "rule": { "type": "specificDates", "dates": ["2026-03-15", "2026-04-19"] } }
+  ]
 }
 
 注意:
 - nameにはゴミの種類を日本語で記載してください
 - iconは空文字列のままにしてください
+- 同じゴミの種類が複数の曜日で回収される場合、曜日ごとに別エントリーにしてください
 - JSONのみを返し、説明は不要です`;
+
+function isV2Response(data: unknown): data is TrashSchedule {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "version" in data &&
+    (data as Record<string, unknown>).version === SCHEDULE_VERSION
+  );
+}
+
+function assignIds(schedule: TrashSchedule): TrashSchedule {
+  return {
+    version: SCHEDULE_VERSION,
+    entries: schedule.entries.map((entry) => ({
+      ...entry,
+      id: randomUUID(),
+    })),
+  };
+}
 
 function parseScheduleJson(text: string): TrashSchedule {
   const jsonMatch = /\{[\s\S]*\}/.exec(text);
   if (jsonMatch === null) {
     throw new Error("PDFからスケジュールを抽出できませんでした");
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Gemini response validated by prompt
-  return JSON.parse(jsonMatch[0]) as TrashSchedule;
+
+  const parsed = JSON.parse(jsonMatch[0]) as unknown;
+
+  if (isV2Response(parsed)) {
+    return assignIds(parsed);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- V1 fallback
+  return migrateV1ToV2(parsed as Record<string, { name: string; icon: string }>);
 }
 
 export async function extractScheduleFromPdf(

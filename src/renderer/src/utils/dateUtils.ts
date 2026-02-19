@@ -13,3 +13,7 @@ export function formatDayGreeting(date: Date): string {
 export function getTodayDayOfWeek(date: Date): number {
   return getDay(date);
 }
+
+export function formatDateToISO(date: Date): string {
+  return format(date, "yyyy-MM-dd");
+}
