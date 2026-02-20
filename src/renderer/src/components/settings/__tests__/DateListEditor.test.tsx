@@ -3,12 +3,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DateListEditor } from "../DateListEditor";
 
-function getDateInput(container: HTMLElement): Element {
-  const input = container.querySelector('input[type="date"]');
-  if (input === null) throw new Error("date input not found");
-  return input;
-}
-
 describe("DateListEditor", () => {
   it("既存の日付が表示される", () => {
     render(<DateListEditor dates={["2026-03-15", "2026-04-20"]} onChange={vi.fn()} />);
@@ -27,9 +21,9 @@ describe("DateListEditor", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
 
-    const { container } = render(<DateListEditor dates={[]} onChange={onChange} />);
+    render(<DateListEditor dates={[]} onChange={onChange} />);
 
-    const dateInput = getDateInput(container);
+    const dateInput = screen.getByDisplayValue("");
     await user.clear(dateInput);
     await user.type(dateInput, "2026-05-10");
     await user.click(screen.getByText("追加"));
@@ -53,9 +47,9 @@ describe("DateListEditor", () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
 
-    const { container } = render(<DateListEditor dates={["2026-03-15"]} onChange={onChange} />);
+    render(<DateListEditor dates={["2026-03-15"]} onChange={onChange} />);
 
-    const dateInput = getDateInput(container);
+    const dateInput = screen.getByDisplayValue("");
     await user.clear(dateInput);
     await user.type(dateInput, "2026-03-15");
     await user.click(screen.getByText("追加"));
