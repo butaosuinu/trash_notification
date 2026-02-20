@@ -26,6 +26,7 @@ export default defineConfig({
         'src/preload/**',
         'src/main/index.ts',
         'src/main/ipc/**',
+        'src/main/services/updaterService.ts',
         'src/renderer/src/stores/settingsAtom.ts',
       ],
     },

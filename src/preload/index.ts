@@ -22,6 +22,30 @@ const electronAPI = {
   quit: (): void => {
     ipcRenderer.send("app:quit");
   },
+  checkForUpdates: async () => {
+    await ipcRenderer.invoke("updater:check");
+  },
+  installUpdate: async () => {
+    await ipcRenderer.invoke("updater:install");
+  },
+  onUpdateStatus: (callback: (payload: unknown) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, payload: unknown): void => {
+      callback(payload);
+    };
+    ipcRenderer.on("updater:status", listener);
+    return () => {
+      ipcRenderer.removeListener("updater:status", listener);
+    };
+  },
+  onUpdateProgress: (callback: (payload: unknown) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, payload: unknown): void => {
+      callback(payload);
+    };
+    ipcRenderer.on("updater:progress", listener);
+    return () => {
+      ipcRenderer.removeListener("updater:progress", listener);
+    };
+  },
 };
 
 contextBridge.exposeInMainWorld("electronAPI", electronAPI);
