@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
-import { afterEach, vi } from "vitest";
+import { vi } from "vitest";
 
 vi.stubGlobal("electronAPI", {
   getSchedule: vi.fn().mockResolvedValue({ version: 2, entries: [] }),
@@ -10,8 +9,4 @@ vi.stubGlobal("electronAPI", {
   getApiKey: vi.fn().mockResolvedValue(null),
   setApiKey: vi.fn().mockResolvedValue(undefined),
   quit: vi.fn(),
-});
-
-afterEach(() => {
-  cleanup();
 });
