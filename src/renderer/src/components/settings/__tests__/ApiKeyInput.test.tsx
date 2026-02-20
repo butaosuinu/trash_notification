@@ -17,9 +17,7 @@ describe("ApiKeyInput", () => {
 
     render(<ApiKeyInput />);
 
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText("API キーを入力")).toHaveValue("test-api-key");
-    });
+    await screen.findByDisplayValue("test-api-key");
   });
 
   it("APIキーが未設定の場合は空のまま", async () => {
@@ -59,8 +57,6 @@ describe("ApiKeyInput", () => {
     await user.type(input, "key");
     await user.click(screen.getByText("保存"));
 
-    await waitFor(() => {
-      expect(screen.getByText("保存済み")).toBeInTheDocument();
-    });
+    await screen.findByText("保存済み");
   });
 });

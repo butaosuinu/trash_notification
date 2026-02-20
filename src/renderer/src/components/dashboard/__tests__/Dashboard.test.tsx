@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "jotai";
 import { Dashboard } from "../Dashboard";
@@ -42,9 +42,7 @@ describe("Dashboard", () => {
       </Provider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("今日の収集するゴミ")).toBeInTheDocument();
-    });
+    await screen.findByText("今日の収集するゴミ");
     expect(screen.getAllByText("燃えるゴミ").length).toBeGreaterThanOrEqual(1);
   });
 
@@ -60,9 +58,7 @@ describe("Dashboard", () => {
       </Provider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText("今日のゴミ回収はありません")).toBeInTheDocument();
-    });
+    await screen.findByText("今日のゴミ回収はありません");
   });
 
   it("設定ボタンがonOpenSettingsを呼ぶ", async () => {

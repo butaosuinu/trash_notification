@@ -42,19 +42,15 @@ describe("ScheduleEditor", () => {
   it("読み込んだエントリーが表示される", async () => {
     renderScheduleEditor();
 
-    await waitFor(() => {
-      expect(screen.getByDisplayValue("燃えるゴミ")).toBeInTheDocument();
-      expect(screen.getByDisplayValue("資源ゴミ")).toBeInTheDocument();
-    });
+    await screen.findByDisplayValue("燃えるゴミ");
+    expect(screen.getByDisplayValue("資源ゴミ")).toBeInTheDocument();
   });
 
   it("エントリーを追加ボタンで新規行が追加される", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderScheduleEditor();
 
-    await waitFor(() => {
-      expect(screen.getByText("エントリーを追加")).toBeInTheDocument();
-    });
+    await screen.findByText("エントリーを追加");
 
     await user.click(screen.getByText("エントリーを追加"));
 
@@ -66,9 +62,7 @@ describe("ScheduleEditor", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderScheduleEditor();
 
-    await waitFor(() => {
-      expect(screen.getByDisplayValue("燃えるゴミ")).toBeInTheDocument();
-    });
+    await screen.findByDisplayValue("燃えるゴミ");
 
     const deleteButtons = screen.getAllByText("削除");
     await user.click(deleteButtons[0]);
@@ -81,9 +75,7 @@ describe("ScheduleEditor", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderScheduleEditor();
 
-    await waitFor(() => {
-      expect(screen.getByDisplayValue("燃えるゴミ")).toBeInTheDocument();
-    });
+    await screen.findByDisplayValue("燃えるゴミ");
 
     const input = screen.getByDisplayValue("燃えるゴミ");
     await user.clear(input);
@@ -97,9 +89,7 @@ describe("ScheduleEditor", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderScheduleEditor();
 
-    await waitFor(() => {
-      expect(screen.getByDisplayValue("燃えるゴミ")).toBeInTheDocument();
-    });
+    await screen.findByDisplayValue("燃えるゴミ");
 
     await user.click(screen.getByText("保存"));
 
@@ -107,8 +97,6 @@ describe("ScheduleEditor", () => {
       expect(window.electronAPI.saveSchedule).toHaveBeenCalled();
     });
 
-    await waitFor(() => {
-      expect(screen.getByText("保存済み")).toBeInTheDocument();
-    });
+    await screen.findByText("保存済み");
   });
 });

@@ -50,10 +50,8 @@ describe("PdfImport", () => {
     renderPdfImport();
     await user.click(screen.getByText("PDF を選択"));
 
-    await waitFor(() => {
-      expect(screen.getByText("/path/to/schedule.pdf")).toBeInTheDocument();
-      expect(screen.getByText("解析")).toBeInTheDocument();
-    });
+    await screen.findByText("/path/to/schedule.pdf");
+    expect(screen.getByText("解析")).toBeInTheDocument();
   });
 
   it("解析後にプレビューテーブルが表示される", async () => {
@@ -64,17 +62,13 @@ describe("PdfImport", () => {
     renderPdfImport();
     await user.click(screen.getByText("PDF を選択"));
 
-    await waitFor(() => {
-      expect(screen.getByText("解析")).toBeInTheDocument();
-    });
+    await screen.findByText("解析");
 
     await user.click(screen.getByText("解析"));
 
-    await waitFor(() => {
-      expect(screen.getByText("抽出結果のプレビュー")).toBeInTheDocument();
-      expect(screen.getByText("燃えるゴミ")).toBeInTheDocument();
-      expect(screen.getByText("資源ゴミ")).toBeInTheDocument();
-    });
+    await screen.findByText("抽出結果のプレビュー");
+    expect(screen.getByText("燃えるゴミ")).toBeInTheDocument();
+    expect(screen.getByText("資源ゴミ")).toBeInTheDocument();
   });
 
   it("キャンセルでリセットされる", async () => {
@@ -85,15 +79,11 @@ describe("PdfImport", () => {
     renderPdfImport();
     await user.click(screen.getByText("PDF を選択"));
 
-    await waitFor(() => {
-      expect(screen.getByText("解析")).toBeInTheDocument();
-    });
+    await screen.findByText("解析");
 
     await user.click(screen.getByText("解析"));
 
-    await waitFor(() => {
-      expect(screen.getByText("キャンセル")).toBeInTheDocument();
-    });
+    await screen.findByText("キャンセル");
 
     await user.click(screen.getByText("キャンセル"));
 
@@ -111,15 +101,11 @@ describe("PdfImport", () => {
     renderPdfImport();
     await user.click(screen.getByText("PDF を選択"));
 
-    await waitFor(() => {
-      expect(screen.getByText("解析")).toBeInTheDocument();
-    });
+    await screen.findByText("解析");
 
     await user.click(screen.getByText("解析"));
 
-    await waitFor(() => {
-      expect(screen.getByText("API接続エラー")).toBeInTheDocument();
-    });
+    await screen.findByText("API接続エラー");
   });
 
   it("保存ボタンでsaveScheduleが呼ばれる", async () => {
@@ -130,15 +116,11 @@ describe("PdfImport", () => {
     renderPdfImport();
     await user.click(screen.getByText("PDF を選択"));
 
-    await waitFor(() => {
-      expect(screen.getByText("解析")).toBeInTheDocument();
-    });
+    await screen.findByText("解析");
 
     await user.click(screen.getByText("解析"));
 
-    await waitFor(() => {
-      expect(screen.getByText("保存")).toBeInTheDocument();
-    });
+    await screen.findByText("保存");
 
     await user.click(screen.getByText("保存"));
 
