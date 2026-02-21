@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { formatDateTime, formatDayGreeting, getTodayDayOfWeek } from "../dateUtils";
+import {
+  formatDateTime,
+  formatDayGreeting,
+  getTodayDayOfWeek,
+  formatTitlebarDate,
+  formatColumnDate,
+} from "../dateUtils";
 
 describe("dateUtils", () => {
   it("formatDateTime は日本語形式の日時文字列を返す", () => {
@@ -20,5 +26,15 @@ describe("dateUtils", () => {
 
     const thursday = new Date(2026, 1, 19);
     expect(getTodayDayOfWeek(thursday)).toBe(4);
+  });
+
+  it("formatTitlebarDate は短い日時文字列を返す", () => {
+    const date = new Date(2026, 1, 19, 14, 30, 0);
+    expect(formatTitlebarDate(date)).toBe("2/19（木）14:30");
+  });
+
+  it("formatColumnDate は月/日のみを返す", () => {
+    const date = new Date(2026, 1, 19);
+    expect(formatColumnDate(date)).toBe("2/19");
   });
 });
