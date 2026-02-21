@@ -30,7 +30,7 @@ export function ApiKeyInput() {
             setApiKey(e.target.value);
           }}
           placeholder="API キーを入力"
-          className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+          className="flex-1 rounded border border-frost-input-border bg-frost-input-bg px-3 py-2 text-sm text-frost-text placeholder:text-frost-text-muted focus:border-frost-accent focus:outline-none transition-all duration-150"
         />
         <Button
           onClick={() => {

@@ -30,19 +30,19 @@ type PreviewProps = {
 function SchedulePreview({ schedule, onConfirm, onCancel }: PreviewProps) {
   return (
     <div>
-      <h4 className="mb-2 text-sm font-medium text-gray-700">抽出結果のプレビュー</h4>
+      <h4 className="mb-2 text-sm font-medium text-frost-text">抽出結果のプレビュー</h4>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b text-left">
+          <tr className="border-b border-frost-glass-border text-left">
             <th className="py-1 pr-2">ゴミの種類</th>
             <th className="py-1">スケジュール</th>
           </tr>
         </thead>
         <tbody>
           {schedule.entries.map((entry) => (
-            <tr key={entry.id} className="border-b">
-              <td className="py-1 pr-2 font-medium">{entry.trash.name}</td>
-              <td className="py-1 text-gray-600">{describeRule(entry.rule)}</td>
+            <tr key={entry.id} className="border-b border-frost-glass-border">
+              <td className="py-1 pr-2 font-medium text-frost-text">{entry.trash.name}</td>
+              <td className="py-1 text-frost-text-secondary">{describeRule(entry.rule)}</td>
             </tr>
           ))}
         </tbody>
@@ -79,7 +79,9 @@ export function PdfImport() {
           >
             PDF を選択
           </Button>
-          {filePath !== null && <span className="truncate text-sm text-gray-600">{filePath}</span>}
+          {filePath !== null && (
+            <span className="truncate text-sm text-frost-text-secondary">{filePath}</span>
+          )}
         </div>
         {filePath !== null && extractedSchedule === null && !isLoading && (
           <Button
@@ -92,7 +94,7 @@ export function PdfImport() {
           </Button>
         )}
         {isLoading && <LoadingSpinner />}
-        {error !== null && <p className="text-sm text-red-500">{error}</p>}
+        {error !== null && <p className="text-sm text-frost-danger">{error}</p>}
         {extractedSchedule !== null && (
           <SchedulePreview
             schedule={extractedSchedule}

@@ -76,7 +76,7 @@ function ScheduleEntryList({ entries, onUpdate, onRemove }: ScheduleEntryListPro
 
 function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }: EntryRowProps) {
   return (
-    <div className="rounded border border-gray-200 p-3">
+    <div className="rounded border border-frost-glass-border bg-frost-glass p-3">
       <div className="mb-2 flex items-center gap-2">
         <input
           type="text"

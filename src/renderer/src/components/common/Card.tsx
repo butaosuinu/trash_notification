@@ -7,7 +7,7 @@ type CardProps = {
   readonly children: ReactNode;
 };
 
-const DEFAULT_TITLE_CLASS = "mb-2 text-sm font-medium text-gray-500";
+const DEFAULT_TITLE_CLASS = "mb-2 text-sm font-medium text-frost-text-secondary";
 
 export function Card({
   title,
@@ -16,7 +16,7 @@ export function Card({
   children,
 }: CardProps) {
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
+    <div className="glass rounded-lg p-4 animate-fade-in">
       {title !== undefined && <TitleTag className={titleClassName}>{title}</TitleTag>}
       {children}
     </div>

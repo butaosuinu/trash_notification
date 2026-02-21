@@ -45,7 +45,7 @@ function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
         const weekNum = i + 1;
         const checked = rule.weekNumbers.includes(weekNum);
         return (
-          <label key={label} className="flex items-center gap-1 text-sm">
+          <label key={label} className="flex items-center gap-1 text-sm text-frost-text-secondary">
             <input
               type="checkbox"
               checked={checked}

@@ -6,8 +6,8 @@ export function DateTimeDisplay() {
 
   return (
     <div className="text-center">
-      <p className="text-lg text-gray-700">{formatDateTime(now)}</p>
-      <p className="mt-1 text-sm font-medium text-blue-600">{formatDayGreeting(now)}</p>
+      <p className="font-heading text-lg font-medium text-frost-text">{formatDateTime(now)}</p>
+      <p className="mt-1 text-sm font-medium text-gradient-blue">{formatDayGreeting(now)}</p>
     </div>
   );
 }
