@@ -26,36 +26,37 @@ type UpdateProgressPayload = {
   total: number;
 };
 
-let win: BrowserWindow | null = null;
-
 const INITIAL_CHECK_DELAY_MS = 5000;
 const PERIODIC_CHECK_INTERVAL_MS = 3_600_000;
 
-function sendStatusToRenderer(payload: UpdateStatusPayload): void {
-  win?.webContents.send("updater:status", payload);
+type RendererNotifier = {
+  readonly sendStatus: (payload: UpdateStatusPayload) => void;
+  readonly sendProgress: (payload: UpdateProgressPayload) => void;
+};
+
+function createRendererNotifier(window: BrowserWindow): RendererNotifier {
+  return {
+    sendStatus(payload: UpdateStatusPayload): void {
+      window.webContents.send("updater:status", payload);
+    },
+    sendProgress(payload: UpdateProgressPayload): void {
+      window.webContents.send("updater:progress", payload);
+    },
+  };
 }
 
-function sendProgressToRenderer(payload: UpdateProgressPayload): void {
-  win?.webContents.send("updater:progress", payload);
-}
-
-function setupAutoUpdaterEvents(): void {
-  /* eslint-disable functional/immutable-data -- external library configuration */
-  autoUpdater.autoDownload = true;
-  autoUpdater.autoInstallOnAppQuit = true;
-  /* eslint-enable functional/immutable-data */
-
+function setupAutoUpdaterEvents(notifier: RendererNotifier): void {
   autoUpdater.on("checking-for-update", () => {
-    sendStatusToRenderer({ status: "checking" });
+    notifier.sendStatus({ status: "checking" });
   });
 
   autoUpdater.on("update-available", (info) => {
-    sendStatusToRenderer({ status: "available", version: info.version });
+    notifier.sendStatus({ status: "available", version: info.version });
   });
 
   autoUpdater.on("download-progress", (progress) => {
-    sendStatusToRenderer({ status: "downloading" });
-    sendProgressToRenderer({
+    notifier.sendStatus({ status: "downloading" });
+    notifier.sendProgress({
       percent: progress.percent,
       bytesPerSecond: progress.bytesPerSecond,
       transferred: progress.transferred,
@@ -64,15 +65,15 @@ function setupAutoUpdaterEvents(): void {
   });
 
   autoUpdater.on("update-downloaded", (info) => {
-    sendStatusToRenderer({ status: "ready", version: info.version });
+    notifier.sendStatus({ status: "ready", version: info.version });
   });
 
   autoUpdater.on("update-not-available", () => {
-    sendStatusToRenderer({ status: "not-available" });
+    notifier.sendStatus({ status: "not-available" });
   });
 
   autoUpdater.on("error", (error) => {
-    sendStatusToRenderer({ status: "error", error: error.message });
+    notifier.sendStatus({ status: "error", error: error.message });
   });
 }
 
@@ -86,14 +87,10 @@ export function installUpdate(): void {
 }
 
 export function initUpdater(window: BrowserWindow): void {
-  if (!app.isPackaged) {
-    // eslint-disable-next-line no-console -- dev mode diagnostic
-    console.log("Updater: skipping in dev mode");
-    return;
-  }
+  if (!app.isPackaged) return;
 
-  win = window;
-  setupAutoUpdaterEvents();
+  const notifier = createRendererNotifier(window);
+  setupAutoUpdaterEvents(notifier);
 
   setTimeout(() => {
     checkForUpdates();
