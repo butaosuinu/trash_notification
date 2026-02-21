@@ -1,4 +1,4 @@
-import log from "electron-log/renderer";
+import log from "electron-log/renderer.js";
 
 export function createLogger(scope: string) {
   const scoped = log.scope(scope);
