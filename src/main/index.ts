@@ -42,8 +42,12 @@ function createWindow(): void {
 }
 
 function createTray(): void {
+  const TRAY_ICON_SIZE = 16;
   const iconPath = join(__dirname, "../../resources/icon.png");
-  const icon = nativeImage.createFromPath(iconPath);
+  const icon = nativeImage.createFromPath(iconPath).resize({
+    width: TRAY_ICON_SIZE,
+    height: TRAY_ICON_SIZE,
+  });
   tray = new Tray(icon);
 
   const contextMenu = Menu.buildFromTemplate([
