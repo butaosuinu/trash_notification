@@ -5,8 +5,10 @@ import type {
   NthWeekdayPattern,
 } from "../../types/schedule";
 import { DAY_NAMES, RULE_TYPE_LABELS, WEEK_NUMBER_LABELS } from "../../constants/schedule";
+import { X } from "lucide-react";
 import { DateListEditor } from "./DateListEditor";
-import { INPUT_CLASS } from "../../constants/styles";
+import { IconButton } from "../common/IconButton";
+import { INPUT_CLASS, ICON_SIZE_XS } from "../../constants/styles";
 
 const RULE_TYPES = ["weekly", "biweekly", "nthWeekday", "specificDates"] as const;
 
@@ -89,13 +91,12 @@ function NthWeekdayPatternRow({ pattern, onPatternChange, onRemove }: PatternRow
           }}
         />
         {onRemove !== null && (
-          <button
-            type="button"
+          <IconButton
+            variant="danger-ghost"
             onClick={onRemove}
-            className="text-xs text-frost-danger hover:text-frost-danger/80"
-          >
-            削除
-          </button>
+            icon={<X size={ICON_SIZE_XS} />}
+            label="削除"
+          />
         )}
       </div>
       <WeekNumberPicker
