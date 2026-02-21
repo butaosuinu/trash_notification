@@ -27,8 +27,8 @@ function getRuleBadge(entry: ScheduleEntry): string | null {
   if (entry.rule.type === "biweekly") return RULE_TYPE_LABELS.biweekly;
   if (entry.rule.type === "nthWeekday") {
     const { patterns } = entry.rule;
-    const allSameDay = patterns.every((p) => p.dayOfWeek === patterns[0].dayOfWeek);
-    if (allSameDay) {
+    const isAllSameDay = patterns.every((p) => p.dayOfWeek === patterns[0].dayOfWeek);
+    if (isAllSameDay) {
       return patterns.flatMap((p) => p.weekNumbers.map((n) => `第${String(n)}`)).join("・");
     }
     return patterns

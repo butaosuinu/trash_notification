@@ -63,8 +63,8 @@ function migrateNthWeekdayEntry(entry: ScheduleEntry): ScheduleEntry {
 }
 
 export function migrateNthWeekdayRules(schedule: TrashSchedule): TrashSchedule {
-  const needsMigration = schedule.entries.some((e) => isLegacyNthWeekday(e.rule));
-  if (!needsMigration) return schedule;
+  const isMigrationNeeded = schedule.entries.some((e) => isLegacyNthWeekday(e.rule));
+  if (!isMigrationNeeded) return schedule;
   return { ...schedule, entries: schedule.entries.map(migrateNthWeekdayEntry) };
 }
 
