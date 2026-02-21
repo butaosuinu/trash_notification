@@ -1,5 +1,5 @@
 import type { ScheduleRule } from "../../types/schedule";
-import { RULE_TYPE_LABELS } from "../../constants/schedule";
+import { RULE_TYPE_LABELS, SHORT_DAY_NAMES } from "../../constants/schedule";
 
 const BADGE_STYLES: Record<string, string> = {
   biweekly: "bg-amber-500/15 text-amber-400 border-amber-500/30",
@@ -10,10 +10,17 @@ const BADGE_STYLES: Record<string, string> = {
 function getBadgeLabel(rule: ScheduleRule): string | null {
   if (rule.type === "weekly") return null;
   if (rule.type === "nthWeekday") {
-    const allWeekNumbers = [...new Set(rule.patterns.flatMap((p) => p.weekNumbers))].toSorted(
-      (a, b) => a - b,
-    );
-    return allWeekNumbers.map((n: number) => `第${String(n)}`).join("・");
+    const { patterns } = rule;
+    const isAllSameDay = patterns.every((p) => p.dayOfWeek === patterns[0].dayOfWeek);
+    if (isAllSameDay) {
+      const allWeekNumbers = [...new Set(patterns.flatMap((p) => p.weekNumbers))].toSorted(
+        (a, b) => a - b,
+      );
+      return allWeekNumbers.map((n: number) => `第${String(n)}`).join("・");
+    }
+    return patterns
+      .flatMap((p) => p.weekNumbers.map((n) => `第${String(n)}${SHORT_DAY_NAMES[p.dayOfWeek]}`))
+      .join("・");
   }
   return RULE_TYPE_LABELS[rule.type] ?? null;
 }

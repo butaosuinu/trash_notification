@@ -66,6 +66,47 @@ describe("WeeklyTrashList", () => {
     expect(emptyLabels.length).toBe(7);
   });
 
+  it("複数曜日のnthWeekdayバッジに曜日名が含まれる", () => {
+    // 2026-02-17は第3火曜、2026-02-18は第3水曜
+    const schedule: TrashSchedule = {
+      version: 2,
+      entries: [
+        {
+          id: "nth-mix",
+          trash: { name: "資源ゴミ", icon: "recycle" },
+          rule: {
+            type: "nthWeekday",
+            patterns: [
+              { dayOfWeek: WEDNESDAY, weekNumbers: [3] },
+              { dayOfWeek: TUESDAY, weekNumbers: [3] },
+            ],
+          },
+        },
+      ],
+    };
+    render(<WeeklyTrashList schedule={schedule} />);
+    expect(screen.getAllByText("第3水・第3火")).toHaveLength(2);
+  });
+
+  it("同一曜日のnthWeekdayバッジに曜日名が含まれない", () => {
+    // 2026-02-17は第3火曜
+    const schedule: TrashSchedule = {
+      version: 2,
+      entries: [
+        {
+          id: "nth-same",
+          trash: { name: "古紙", icon: "paper" },
+          rule: {
+            type: "nthWeekday",
+            patterns: [{ dayOfWeek: TUESDAY, weekNumbers: [1, 3] }],
+          },
+        },
+      ],
+    };
+    render(<WeeklyTrashList schedule={schedule} />);
+    expect(screen.getByText("第1・第3")).toBeInTheDocument();
+  });
+
   it("隔週ルールのバッジが表示される", () => {
     const schedule: TrashSchedule = {
       version: 2,
