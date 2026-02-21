@@ -1,5 +1,27 @@
 import type { TrashSchedule } from "./schedule";
 
+type UpdateStatus =
+  | "idle"
+  | "checking"
+  | "available"
+  | "not-available"
+  | "downloading"
+  | "ready"
+  | "error";
+
+type UpdateStatusPayload = {
+  status: UpdateStatus;
+  version?: string;
+  error?: string;
+};
+
+type UpdateProgressPayload = {
+  percent: number;
+  bytesPerSecond: number;
+  transferred: number;
+  total: number;
+};
+
 type ElectronAPI = {
   getSchedule: () => Promise<TrashSchedule>;
   saveSchedule: (schedule: TrashSchedule) => Promise<void>;
@@ -8,6 +30,10 @@ type ElectronAPI = {
   getApiKey: () => Promise<string | null>;
   setApiKey: (key: string) => Promise<void>;
   quit: () => void;
+  checkForUpdates: () => Promise<void>;
+  installUpdate: () => Promise<void>;
+  onUpdateStatus: (callback: (payload: UpdateStatusPayload) => void) => () => void;
+  onUpdateProgress: (callback: (payload: UpdateProgressPayload) => void) => () => void;
 };
 
 declare global {

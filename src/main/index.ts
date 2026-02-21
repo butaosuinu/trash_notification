@@ -2,6 +2,8 @@ import { app, BrowserWindow, Tray, Menu, nativeImage } from "electron";
 import { join } from "node:path";
 import { registerScheduleHandlers } from "./ipc/scheduleHandlers";
 import { registerGeminiHandlers } from "./ipc/geminiHandlers";
+import { registerUpdaterHandlers } from "./ipc/updaterHandlers";
+import { initUpdater } from "./services/updaterService";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -63,9 +65,14 @@ function createTray(): void {
 void app.whenReady().then(() => {
   registerScheduleHandlers();
   registerGeminiHandlers();
+  registerUpdaterHandlers();
 
   createWindow();
   createTray();
+
+  if (mainWindow !== null) {
+    initUpdater(mainWindow);
+  }
 });
 
 app.on("window-all-closed", () => {

@@ -9,4 +9,10 @@ vi.stubGlobal("electronAPI", {
   getApiKey: vi.fn().mockResolvedValue(null),
   setApiKey: vi.fn().mockResolvedValue(undefined),
   quit: vi.fn(),
+  checkForUpdates: vi.fn().mockResolvedValue(undefined),
+  installUpdate: vi.fn().mockResolvedValue(undefined),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function -- cleanup stub
+  onUpdateStatus: vi.fn().mockReturnValue(() => {}),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function -- cleanup stub
+  onUpdateProgress: vi.fn().mockReturnValue(() => {}),
 });
