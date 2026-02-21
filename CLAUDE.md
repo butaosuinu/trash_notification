@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Electron desktop app for Japanese trash/garbage collection reminders (ゴミ出し通知). Built with Electron 35 + React 19 + TypeScript 5.8 + Vite 6. Uses Google Gemini 2.0 Flash API to parse PDF schedules into structured data.
+Electron desktop app for Japanese trash/garbage collection reminders (ゴミ出し通知). Built with Electron 35 + React 19 + TypeScript 5.8 + Vite 6. Uses Google Gemini 3 Flash API to parse PDF schedules into structured data.
 
 ## Commands
 
@@ -33,34 +33,43 @@ Three-process Electron app managed by `electron-vite`:
 
 ### Main Process
 
-- `src/main/index.ts` — App entry, creates BrowserWindow (500x400) and tray icon
-- `src/main/ipc/` — IPC handlers for schedule CRUD and Gemini API calls
-- `src/main/services/scheduleStore.ts` — `electron-store` persistence wrapper
-- `src/main/services/geminiService.ts` — Google Gemini PDF-to-schedule extraction
+- `src/main/index.ts` — App entry, creates BrowserWindow (500x400) and tray icon, initializes auto-updater
+- `src/main/ipc/scheduleHandlers.ts` — IPC handlers for schedule CRUD and API key management
+- `src/main/ipc/geminiHandlers.ts` — IPC handlers for PDF file selection and Gemini extraction
+- `src/main/ipc/updaterHandlers.ts` — IPC handlers for manual update check and installation
+- `src/main/services/scheduleStore.ts` — `electron-store` persistence with V1→V2 auto-migration
+- `src/main/services/geminiService.ts` — Google Gemini PDF-to-schedule extraction (V1/V2 response handling)
+- `src/main/services/updaterService.ts` — `electron-updater` auto-update with renderer notification
 
 ### Renderer
 
-- State: Jotai atoms in `src/renderer/src/stores/` (`scheduleAtom`, `settingsAtom`)
-- Hooks: `useSchedule` (load/save), `useDateTime` (clock tick), `useGeminiImport` (PDF import flow)
-- Views: Dashboard (today's trash + weekly schedule) and Settings (API key, PDF import, schedule editor)
+- Types: `src/renderer/src/types/` (`schedule.ts` for V2 schema, `electron.d.ts` for IPC types)
+- Constants: `src/renderer/src/constants/schedule.ts` (trash icons, day names, rule labels)
+- Utils: `src/renderer/src/utils/` (`dateUtils.ts` for date formatting, `scheduleMatch.ts` for rule matching)
+- State: Jotai atoms in `src/renderer/src/stores/` (`scheduleAtom`, `viewModeAtom`, `updaterAtom`)
+- Hooks: `useSchedule` (load/save), `useDateTime` (clock tick), `useGeminiImport` (PDF import), `useUpdater` (auto-update)
+- Views: Dashboard (today's trash + weekly schedule), Settings (API key, PDF import, schedule/rule editor), UpdateBanner (global)
 - Path alias: `@/` maps to `src/renderer/src/`
 
 ### Key Types
 
 ```typescript
 type TrashDay = { name: string; icon: string };
-type TrashSchedule = Record<string, TrashDay>;  // key = day of week (0-6)
+type ScheduleRule = WeeklyRule | BiweeklyRule | NthWeekdayRule | SpecificDatesRule;
+type ScheduleEntry = { id: string; trash: TrashDay; rule: ScheduleRule };
+type TrashSchedule = { version: 2; entries: ScheduleEntry[] };
 ```
 
 ## Code Style & Linting
 
-- **Linters**: Oxlint (primary, Rust-based) + ESLint with `eslint-config-love`
+- **Linters**: Oxlint (primary, Rust-based) + ESLint with `eslint-config-love` + `eslint-plugin-functional`
 - **Formatters**: Oxfmt for TS/TSX, Prettier for CSS only
 - **Preload must output as CJS** (configured in `electron.vite.config.ts`) — changing this causes white screen
 - Use `type` keyword instead of `interface` (ESLint rule)
 - No magic numbers except 0 and 1
 - Max function lines: 50, max nesting depth: 4, complexity limit: 15
 - Functional components with hooks only, no class components
+- Functional style enforced: no `let` (use `const`), no loops (use array methods), no mutations
 
 ## Testing
 
