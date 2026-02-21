@@ -66,12 +66,34 @@ describe("WeeklySchedule", () => {
         {
           id: "nth-1",
           trash: { name: "粗大ゴミ", icon: "oversized" },
-          rule: { type: "nthWeekday", dayOfWeek: 3, weekNumbers: [1, 3] },
+          rule: { type: "nthWeekday", patterns: [{ dayOfWeek: 3, weekNumbers: [1, 3] }] },
         },
       ],
     };
     render(<WeeklySchedule schedule={schedule} />);
     expect(screen.getByText("第1・第3")).toBeInTheDocument();
+  });
+
+  it("複数パターンのnthWeekdayが複数曜日に表示される", () => {
+    const schedule: TrashSchedule = {
+      version: 2,
+      entries: [
+        {
+          id: "nth-mix",
+          trash: { name: "資源ゴミ", icon: "recycle" },
+          rule: {
+            type: "nthWeekday",
+            patterns: [
+              { dayOfWeek: 3, weekNumbers: [2] },
+              { dayOfWeek: 2, weekNumbers: [4] },
+            ],
+          },
+        },
+      ],
+    };
+    render(<WeeklySchedule schedule={schedule} />);
+    expect(screen.getAllByText("資源ゴミ")).toHaveLength(2);
+    expect(screen.getAllByText("第2水・第4火")).toHaveLength(2);
   });
 
   it("指定日のスケジュールが今後の指定日セクションに表示される", () => {

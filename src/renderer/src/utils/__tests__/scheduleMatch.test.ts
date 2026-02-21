@@ -86,8 +86,7 @@ describe("doesRuleMatch", () => {
   describe("nthWeekday", () => {
     const rule: NthWeekdayRule = {
       type: "nthWeekday",
-      dayOfWeek: 3,
-      weekNumbers: [1, 3],
+      patterns: [{ dayOfWeek: 3, weekNumbers: [1, 3] }],
     };
 
     it("第1水曜日にマッチする", () => {
@@ -118,8 +117,7 @@ describe("doesRuleMatch", () => {
     it("第5週が存在する月の第5曜日を判定する", () => {
       const fifthRule: NthWeekdayRule = {
         type: "nthWeekday",
-        dayOfWeek: 5,
-        weekNumbers: [5],
+        patterns: [{ dayOfWeek: 5, weekNumbers: [5] }],
       };
       const fifthFriday = new Date(2026, 0, 30);
       expect(doesRuleMatch(fifthFriday, fifthRule)).toBe(true);
@@ -128,11 +126,54 @@ describe("doesRuleMatch", () => {
     it("月の最初の日が第1週になる", () => {
       const firstDayRule: NthWeekdayRule = {
         type: "nthWeekday",
-        dayOfWeek: 0,
-        weekNumbers: [1],
+        patterns: [{ dayOfWeek: 0, weekNumbers: [1] }],
       };
       const firstSunday = new Date(2026, 2, 1);
       expect(doesRuleMatch(firstSunday, firstDayRule)).toBe(true);
+    });
+
+    it("複数パターン: 第2水曜にマッチする", () => {
+      const multiRule: NthWeekdayRule = {
+        type: "nthWeekday",
+        patterns: [
+          { dayOfWeek: 3, weekNumbers: [2] },
+          { dayOfWeek: 2, weekNumbers: [4] },
+        ],
+      };
+      const secondWed = new Date(2026, 1, 11);
+      expect(doesRuleMatch(secondWed, multiRule)).toBe(true);
+    });
+
+    it("複数パターン: 第4火曜にマッチする", () => {
+      const multiRule: NthWeekdayRule = {
+        type: "nthWeekday",
+        patterns: [
+          { dayOfWeek: 3, weekNumbers: [2] },
+          { dayOfWeek: 2, weekNumbers: [4] },
+        ],
+      };
+      const fourthTue = new Date(2026, 1, 24);
+      expect(doesRuleMatch(fourthTue, multiRule)).toBe(true);
+    });
+
+    it("複数パターン: どちらにもマッチしない日", () => {
+      const multiRule: NthWeekdayRule = {
+        type: "nthWeekday",
+        patterns: [
+          { dayOfWeek: 3, weekNumbers: [2] },
+          { dayOfWeek: 2, weekNumbers: [4] },
+        ],
+      };
+      const firstWed = new Date(2026, 1, 4);
+      expect(doesRuleMatch(firstWed, multiRule)).toBe(false);
+    });
+
+    it("空のパターン配列はマッチしない", () => {
+      const emptyRule: NthWeekdayRule = {
+        type: "nthWeekday",
+        patterns: [],
+      };
+      expect(doesRuleMatch(new Date(2026, 1, 4), emptyRule)).toBe(false);
     });
   });
 

@@ -1,4 +1,4 @@
-export { DAY_NAMES, TRASH_ICONS } from "../../../shared/constants/schedule";
+export { DAY_NAMES, SHORT_DAY_NAMES, TRASH_ICONS } from "../../../shared/constants/schedule";
 
 export const TRASH_ICON_LABELS: Record<string, string> = {
   burn: "燃えるゴミ",

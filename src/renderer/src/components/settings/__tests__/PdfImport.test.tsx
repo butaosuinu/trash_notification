@@ -16,7 +16,7 @@ const extractedSchedule: TrashSchedule = {
     {
       id: "ext-2",
       trash: { name: "資源ゴミ", icon: "recycle" },
-      rule: { type: "nthWeekday", dayOfWeek: 3, weekNumbers: [1, 3] },
+      rule: { type: "nthWeekday", patterns: [{ dayOfWeek: 3, weekNumbers: [1, 3] }] },
     },
   ],
 };

@@ -1,4 +1,9 @@
-import type { ScheduleRule, BiweeklyRule, NthWeekdayRule } from "../../types/schedule";
+import type {
+  ScheduleRule,
+  BiweeklyRule,
+  NthWeekdayRule,
+  NthWeekdayPattern,
+} from "../../types/schedule";
 import { DAY_NAMES, RULE_TYPE_LABELS, WEEK_NUMBER_LABELS } from "../../constants/schedule";
 import { DateListEditor } from "./DateListEditor";
 import { INPUT_CLASS } from "../../constants/styles";
@@ -10,7 +15,7 @@ function createDefaultRule(ruleType: string): ScheduleRule {
     case "biweekly":
       return { type: "biweekly", dayOfWeek: 0, referenceDate: "" };
     case "nthWeekday":
-      return { type: "nthWeekday", dayOfWeek: 0, weekNumbers: [1] };
+      return { type: "nthWeekday", patterns: [{ dayOfWeek: 0, weekNumbers: [1] }] };
     case "specificDates":
       return { type: "specificDates", dates: [] };
     default:
@@ -36,14 +41,16 @@ function DayOfWeekSelect({ value, onChange }: { value: number; onChange: (v: num
   );
 }
 
-type WeekNumberPickerProps = { rule: NthWeekdayRule; onChange: (rule: ScheduleRule) => void };
+type WeekNumberPickerProps = {
+  weekNumbers: number[];
+  onChange: (weekNumbers: number[]) => void;
+};
 
-function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
+function WeekNumberPicker({ weekNumbers, onChange }: WeekNumberPickerProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {WEEK_NUMBER_LABELS.map((label, i) => {
         const weekNum = i + 1;
-        const { weekNumbers } = rule;
         const checked = weekNumbers.includes(weekNum);
         return (
           <label key={label} className="flex items-center gap-1 text-sm text-frost-text-secondary">
@@ -54,13 +61,92 @@ function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
                 const updated = checked
                   ? weekNumbers.filter((n) => n !== weekNum)
                   : [...weekNumbers, weekNum].toSorted((a, b) => a - b);
-                onChange({ ...rule, weekNumbers: updated });
+                onChange(updated);
               }}
             />
             {label}
           </label>
         );
       })}
+    </div>
+  );
+}
+
+type PatternRowProps = {
+  pattern: NthWeekdayPattern;
+  onPatternChange: (pattern: NthWeekdayPattern) => void;
+  onRemove: (() => void) | null;
+};
+
+function NthWeekdayPatternRow({ pattern, onPatternChange, onRemove }: PatternRowProps) {
+  return (
+    <div className="space-y-1 rounded border border-frost-glass-border p-2">
+      <div className="flex items-center gap-2">
+        <DayOfWeekSelect
+          value={pattern.dayOfWeek}
+          onChange={(v) => {
+            onPatternChange({ ...pattern, dayOfWeek: v });
+          }}
+        />
+        {onRemove !== null && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="text-xs text-frost-danger hover:text-frost-danger/80"
+          >
+            削除
+          </button>
+        )}
+      </div>
+      <WeekNumberPicker
+        weekNumbers={pattern.weekNumbers}
+        onChange={(weekNumbers) => {
+          onPatternChange({ ...pattern, weekNumbers });
+        }}
+      />
+    </div>
+  );
+}
+
+type NthWeekdayFieldsProps = { rule: NthWeekdayRule; onChange: (rule: ScheduleRule) => void };
+
+function NthWeekdayFields({ rule, onChange }: NthWeekdayFieldsProps) {
+  const updatePattern = (index: number, pattern: NthWeekdayPattern) => {
+    const updated = rule.patterns.map((p, i) => (i === index ? pattern : p));
+    onChange({ ...rule, patterns: updated });
+  };
+
+  const removePattern = (index: number) => {
+    onChange({ ...rule, patterns: rule.patterns.filter((_, i) => i !== index) });
+  };
+
+  return (
+    <div className="space-y-2">
+      {rule.patterns.map((pattern, index) => (
+        <NthWeekdayPatternRow
+          key={index}
+          pattern={pattern}
+          onPatternChange={(p) => {
+            updatePattern(index, p);
+          }}
+          onRemove={
+            rule.patterns.length > 1
+              ? () => {
+                  removePattern(index);
+                }
+              : null
+          }
+        />
+      ))}
+      <button
+        type="button"
+        onClick={() => {
+          onChange({ ...rule, patterns: [...rule.patterns, { dayOfWeek: 0, weekNumbers: [1] }] });
+        }}
+        className="text-xs text-frost-accent hover:text-frost-accent/80"
+      >
+        + パターンを追加
+      </button>
     </div>
   );
 }
@@ -104,17 +190,7 @@ function RuleFields({ rule, onChange }: RuleFieldsProps) {
     case "biweekly":
       return <BiweeklyFields rule={rule} onChange={onChange} />;
     case "nthWeekday":
-      return (
-        <div className="space-y-1">
-          <DayOfWeekSelect
-            value={rule.dayOfWeek}
-            onChange={(v) => {
-              onChange({ ...rule, dayOfWeek: v });
-            }}
-          />
-          <WeekNumberPicker rule={rule} onChange={onChange} />
-        </div>
-      );
+      return <NthWeekdayFields rule={rule} onChange={onChange} />;
     case "specificDates":
       return (
         <DateListEditor
@@ -127,17 +203,31 @@ function RuleFields({ rule, onChange }: RuleFieldsProps) {
   }
 }
 
+function getDayOfWeekFromRule(rule: ScheduleRule): number | null {
+  if (rule.type === "nthWeekday") return rule.patterns[0]?.dayOfWeek ?? null;
+  if ("dayOfWeek" in rule) return rule.dayOfWeek;
+  return null;
+}
+
 type RuleEditorProps = { rule: ScheduleRule; onChange: (rule: ScheduleRule) => void };
 
 export function RuleEditor({ rule, onChange }: RuleEditorProps) {
   const handleTypeChange = (newType: string) => {
     if (newType === rule.type) return;
+    const sourceDayOfWeek = getDayOfWeekFromRule(rule);
     const defaultRule = createDefaultRule(newType);
-    const newRule =
-      "dayOfWeek" in rule && "dayOfWeek" in defaultRule
-        ? { ...defaultRule, dayOfWeek: rule.dayOfWeek }
-        : defaultRule;
-    onChange(newRule);
+    if (sourceDayOfWeek !== null && newType === "nthWeekday") {
+      onChange({
+        type: "nthWeekday",
+        patterns: [{ dayOfWeek: sourceDayOfWeek, weekNumbers: [1] }],
+      });
+      return;
+    }
+    if (sourceDayOfWeek !== null && "dayOfWeek" in defaultRule) {
+      onChange({ ...defaultRule, dayOfWeek: sourceDayOfWeek });
+      return;
+    }
+    onChange(defaultRule);
   };
 
   return (

@@ -1,6 +1,13 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { migrateV1ToV2, loadSchedule, saveSchedule, getApiKey, setApiKey } from "../scheduleStore";
+import {
+  migrateV1ToV2,
+  migrateStoreIfNeeded,
+  loadSchedule,
+  saveSchedule,
+  getApiKey,
+  setApiKey,
+} from "../scheduleStore";
 
 const { mockGet, mockSet } = vi.hoisted(() => ({
   mockGet: vi.fn(),
@@ -19,6 +26,12 @@ vi.mock("node:crypto", () => ({
 }));
 
 vi.mock("../logger");
+
+function mockStoreData(migratedVersion: string | null, schedule: unknown): void {
+  mockGet.mockImplementation((key: string) =>
+    key === "migratedVersion" ? migratedVersion : schedule,
+  );
+}
 
 describe("scheduleStore", () => {
   beforeEach(() => {
@@ -65,8 +78,73 @@ describe("scheduleStore", () => {
     });
   });
 
+  describe("migrateStoreIfNeeded", () => {
+    it("バージョン一致時はマイグレーションをスキップする", () => {
+      mockStoreData("1.0.0", undefined);
+
+      migrateStoreIfNeeded("1.0.0");
+
+      expect(mockSet).not.toHaveBeenCalled();
+    });
+
+    it("V1データをV2にマイグレーションして永続化する", () => {
+      mockStoreData(null, { "2": { name: "燃えるゴミ", icon: "burn" } });
+
+      migrateStoreIfNeeded("1.0.0");
+
+      expect(mockSet).toHaveBeenCalledWith("schedule", expect.objectContaining({ version: 2 }));
+      expect(mockSet).toHaveBeenCalledWith("migratedVersion", "1.0.0");
+    });
+
+    it("NthWeekdayレガシー形式をマイグレーションして永続化する", () => {
+      mockStoreData(null, {
+        version: 2,
+        entries: [
+          {
+            id: "1",
+            trash: { name: "粗大ゴミ", icon: "large" },
+            rule: { type: "nthWeekday", dayOfWeek: 3, weekNumbers: [1, 3] },
+          },
+        ],
+      });
+
+      migrateStoreIfNeeded("1.0.0");
+
+      expect(mockSet).toHaveBeenCalledWith(
+        "schedule",
+        expect.objectContaining({
+          version: 2,
+          entries: [
+            expect.objectContaining({
+              rule: { type: "nthWeekday", patterns: [{ dayOfWeek: 3, weekNumbers: [1, 3] }] },
+            }),
+          ],
+        }),
+      );
+      expect(mockSet).toHaveBeenCalledWith("migratedVersion", "1.0.0");
+    });
+
+    it("マイグレーション不要なV2データはスケジュールを書き込まない", () => {
+      mockStoreData(null, {
+        version: 2,
+        entries: [
+          {
+            id: "1",
+            trash: { name: "燃えるゴミ", icon: "burn" },
+            rule: { type: "weekly", dayOfWeek: 2 },
+          },
+        ],
+      });
+
+      migrateStoreIfNeeded("1.0.0");
+
+      expect(mockSet).not.toHaveBeenCalledWith("schedule", expect.anything());
+      expect(mockSet).toHaveBeenCalledWith("migratedVersion", "1.0.0");
+    });
+  });
+
   describe("loadSchedule", () => {
-    it("V2データはそのまま返却する", () => {
+    it("ストアのデータをそのまま返却する", () => {
       const v2Data = {
         version: 2,
         entries: [
@@ -82,19 +160,6 @@ describe("scheduleStore", () => {
       const result = loadSchedule();
       expect(result).toEqual(v2Data);
       expect(mockSet).not.toHaveBeenCalled();
-    });
-
-    it("V1データを自動マイグレーションして永続化する", () => {
-      const v1Data = {
-        "2": { name: "燃えるゴミ", icon: "burn" },
-      };
-      mockGet.mockReturnValue(v1Data);
-
-      const result = loadSchedule();
-
-      expect(result.version).toBe(2);
-      expect(result.entries).toHaveLength(1);
-      expect(mockSet).toHaveBeenCalledWith("schedule", result);
     });
   });
 

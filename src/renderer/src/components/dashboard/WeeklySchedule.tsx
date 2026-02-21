@@ -1,6 +1,11 @@
 import { getDay } from "date-fns";
 import type { TrashSchedule, ScheduleEntry, SpecificDatesRule } from "../../types/schedule";
-import { DAY_NAMES, TRASH_ICONS, RULE_TYPE_LABELS } from "../../constants/schedule";
+import {
+  DAY_NAMES,
+  SHORT_DAY_NAMES,
+  TRASH_ICONS,
+  RULE_TYPE_LABELS,
+} from "../../constants/schedule";
 import { formatDateToISO } from "../../utils/dateUtils";
 import { Card } from "../common/Card";
 
@@ -11,6 +16,9 @@ const UPCOMING_DAYS_LIMIT = 30;
 function getEntriesForDayOfWeek(entries: ScheduleEntry[], dayOfWeek: number): ScheduleEntry[] {
   return entries.filter((entry) => {
     if (entry.rule.type === "specificDates") return false;
+    if (entry.rule.type === "nthWeekday") {
+      return entry.rule.patterns.some((p) => p.dayOfWeek === dayOfWeek);
+    }
     return entry.rule.dayOfWeek === dayOfWeek;
   });
 }
@@ -18,7 +26,14 @@ function getEntriesForDayOfWeek(entries: ScheduleEntry[], dayOfWeek: number): Sc
 function getRuleBadge(entry: ScheduleEntry): string | null {
   if (entry.rule.type === "biweekly") return RULE_TYPE_LABELS.biweekly;
   if (entry.rule.type === "nthWeekday") {
-    return entry.rule.weekNumbers.map((n) => `第${String(n)}`).join("・");
+    const { patterns } = entry.rule;
+    const isAllSameDay = patterns.every((p) => p.dayOfWeek === patterns[0].dayOfWeek);
+    if (isAllSameDay) {
+      return patterns.flatMap((p) => p.weekNumbers.map((n) => `第${String(n)}`)).join("・");
+    }
+    return patterns
+      .flatMap((p) => p.weekNumbers.map((n) => `第${String(n)}${SHORT_DAY_NAMES[p.dayOfWeek]}`))
+      .join("・");
   }
   return null;
 }

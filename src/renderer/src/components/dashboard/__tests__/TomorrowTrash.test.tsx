@@ -38,7 +38,7 @@ describe("TomorrowTrash", () => {
       {
         id: "1",
         trash: { name: "古紙", icon: "paper" },
-        rule: { type: "nthWeekday", dayOfWeek: THURSDAY, weekNumbers: [1, 3] },
+        rule: { type: "nthWeekday", patterns: [{ dayOfWeek: THURSDAY, weekNumbers: [1, 3] }] },
       },
     ];
     render(<TomorrowTrash entries={entries} tomorrow={new Date()} />);
