@@ -14,11 +14,13 @@ function describeRule(rule: ScheduleRule): string {
       return `${RULE_TYPE_LABELS.weekly} ${DAY_NAMES[rule.dayOfWeek]}`;
     case "biweekly":
       return `${RULE_TYPE_LABELS.biweekly} ${DAY_NAMES[rule.dayOfWeek]}`;
-    case "nthWeekday": {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- defend against malformed persisted data
-      const weeks = (rule.weekNumbers ?? []).map((n) => `第${String(n)}`).join("・");
-      return `${weeks} ${DAY_NAMES[rule.dayOfWeek]}`;
-    }
+    case "nthWeekday":
+      return rule.patterns
+        .map((p) => {
+          const weeks = p.weekNumbers.map((n) => `第${String(n)}`).join("・");
+          return `${weeks} ${DAY_NAMES[p.dayOfWeek]}`;
+        })
+        .join(" + ");
     case "specificDates":
       return `${RULE_TYPE_LABELS.specificDates} (${String(rule.dates.length)}日)`;
   }

@@ -1,14 +1,22 @@
 import { GoogleGenAI } from "@google/genai";
 import * as fs from "node:fs";
 import { randomUUID } from "node:crypto";
-import { migrateV1ToV2, SCHEDULE_VERSION, type TrashSchedule } from "./scheduleStore";
+import {
+  migrateV1ToV2,
+  migrateNthWeekdayRules,
+  SCHEDULE_VERSION,
+  type TrashSchedule,
+} from "./scheduleStore";
 import type { ScheduleRule } from "../../shared/types/schedule";
 import { createLogger } from "./logger";
+
+type RawPattern = { dayOfWeek?: number; weekNumbers?: number[] };
 
 type RawRule = {
   type: string;
   dayOfWeek?: number;
   weekNumbers?: number[];
+  patterns?: RawPattern[];
   referenceDate?: string;
   dates?: string[];
 };
@@ -21,7 +29,9 @@ const EXTRACTION_PROMPT = `これは日本の自治体が配布しているゴ�
 各ゴミの種類について、回収パターンを判定し、以下のルール種別を使い分けてください:
 - "weekly": 毎週同じ曜日に回収（dayOfWeek: 0=日曜〜6=土曜）
 - "biweekly": 隔週回収（dayOfWeek + referenceDate: 回収日のひとつをYYYY-MM-DD形式で）
-- "nthWeekday": 第N曜日に回収（dayOfWeek + weekNumbers: [1,3] のように第何週かの配列）
+- "nthWeekday": 第N曜日に回収（patterns: 曜日と第N週の組み合わせ配列）
+  - 同じ曜日の場合: patterns: [{ "dayOfWeek": 3, "weekNumbers": [1, 3] }]
+  - 異なる曜日の場合: patterns: [{ "dayOfWeek": 3, "weekNumbers": [2] }, { "dayOfWeek": 2, "weekNumbers": [4] }]
 - "specificDates": 不規則な日付で回収（dates: ["YYYY-MM-DD", ...] の配列）
 
 以下の形式の有効なJSONのみを返してください:
@@ -29,7 +39,7 @@ const EXTRACTION_PROMPT = `これは日本の自治体が配布しているゴ�
   "version": 2,
   "entries": [
     { "trash": { "name": "燃えるゴミ", "icon": "burn" }, "rule": { "type": "weekly", "dayOfWeek": 2 } },
-    { "trash": { "name": "資源ゴミ", "icon": "recycle" }, "rule": { "type": "nthWeekday", "dayOfWeek": 3, "weekNumbers": [1, 3] } },
+    { "trash": { "name": "資源ゴミ", "icon": "recycle" }, "rule": { "type": "nthWeekday", "patterns": [{ "dayOfWeek": 3, "weekNumbers": [1, 3] }] } },
     { "trash": { "name": "粗大ゴミ", "icon": "oversized" }, "rule": { "type": "specificDates", "dates": ["2026-03-15", "2026-04-19"] } }
   ]
 }
@@ -58,8 +68,10 @@ function sanitizeRule(raw: RawRule): ScheduleRule {
     case "nthWeekday":
       return {
         type: "nthWeekday",
-        dayOfWeek: raw.dayOfWeek ?? 0,
-        weekNumbers: raw.weekNumbers ?? [1],
+        patterns: raw.patterns?.map((p) => ({
+          dayOfWeek: p.dayOfWeek ?? 0,
+          weekNumbers: p.weekNumbers ?? [1],
+        })) ?? [{ dayOfWeek: raw.dayOfWeek ?? 0, weekNumbers: raw.weekNumbers ?? [1] }],
       };
     case "specificDates":
       return { type: "specificDates", dates: raw.dates ?? [] };
@@ -94,7 +106,7 @@ function parseScheduleJson(text: string): TrashSchedule {
   const parsed = JSON.parse(jsonMatch[0]) as unknown;
 
   if (isV2Response(parsed)) {
-    return assignIds(parsed);
+    return migrateNthWeekdayRules(assignIds(parsed));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- V1 fallback

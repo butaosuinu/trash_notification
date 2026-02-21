@@ -1,4 +1,4 @@
-export { DAY_NAMES, TRASH_ICONS } from "../../../shared/constants/schedule";
+export { DAY_NAMES, SHORT_DAY_NAMES, TRASH_ICONS } from "../../../shared/constants/schedule";
 
 export const TRASH_ICON_LABELS: Record<string, string> = {
   burn: "燃えるゴミ",
@@ -26,3 +26,6 @@ export const WEEK_NUMBER_LABELS = ["第1", "第2", "第3", "第4", "第5"] as co
 
 export const CLOCK_INTERVAL_MS = 1000;
 export const SAVE_FEEDBACK_DELAY_MS = 2000;
+
+export const SATURDAY_INDEX = 6;
+export const STAGGER_MS = 50;

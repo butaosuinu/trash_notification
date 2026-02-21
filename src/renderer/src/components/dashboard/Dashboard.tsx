@@ -1,3 +1,4 @@
+import { addDays } from "date-fns";
 import { Settings } from "lucide-react";
 import { ICON_SIZE } from "../../constants/styles";
 import { useSchedule } from "../../hooks/useSchedule";
@@ -5,7 +6,11 @@ import { getTodayEntries } from "../../utils/scheduleMatch";
 import { IconButton } from "../common/IconButton";
 import { DateTimeDisplay } from "./DateTimeDisplay";
 import { TrashInfo } from "./TrashInfo";
+import { TomorrowTrash } from "./TomorrowTrash";
+import { WeeklyTrashList } from "./WeeklyTrashList";
 import { WeeklySchedule } from "./WeeklySchedule";
+
+const TOMORROW_OFFSET = 1;
 
 type DashboardProps = {
   onOpenSettings: () => void;
@@ -13,7 +18,10 @@ type DashboardProps = {
 
 export function Dashboard({ onOpenSettings }: DashboardProps) {
   const { schedule } = useSchedule();
-  const todayEntries = getTodayEntries(new Date(), schedule.entries);
+  const now = new Date();
+  const tomorrow = addDays(now, TOMORROW_OFFSET);
+  const todayEntries = getTodayEntries(now, schedule.entries);
+  const tomorrowEntries = getTodayEntries(tomorrow, schedule.entries);
 
   return (
     <div className="flex h-screen flex-col p-4 pt-2">
@@ -32,6 +40,8 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
       <div className="flex-1 space-y-4 overflow-y-auto">
         <DateTimeDisplay />
         <TrashInfo entries={todayEntries} />
+        <TomorrowTrash entries={tomorrowEntries} tomorrow={tomorrow} />
+        <WeeklyTrashList schedule={schedule} />
         <WeeklySchedule schedule={schedule} />
       </div>
     </div>

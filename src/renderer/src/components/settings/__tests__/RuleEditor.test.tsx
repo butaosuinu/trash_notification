@@ -37,7 +37,10 @@ describe("RuleEditor", () => {
   });
 
   it("nthWeekdayルールで週番号チェックボックスが表示される", () => {
-    const rule: ScheduleRule = { type: "nthWeekday", dayOfWeek: 3, weekNumbers: [1, 3] };
+    const rule: ScheduleRule = {
+      type: "nthWeekday",
+      patterns: [{ dayOfWeek: 3, weekNumbers: [1, 3] }],
+    };
     render(<RuleEditor rule={rule} onChange={vi.fn()} />);
 
     const checkboxes = screen.getAllByRole("checkbox");
@@ -50,7 +53,10 @@ describe("RuleEditor", () => {
 
   it("nthWeekdayの週番号チェックボックスをトグルできる", async () => {
     const onChange = vi.fn();
-    const rule: ScheduleRule = { type: "nthWeekday", dayOfWeek: 3, weekNumbers: [1, 3] };
+    const rule: ScheduleRule = {
+      type: "nthWeekday",
+      patterns: [{ dayOfWeek: 3, weekNumbers: [1, 3] }],
+    };
     const user = userEvent.setup();
 
     render(<RuleEditor rule={rule} onChange={onChange} />);
@@ -59,7 +65,34 @@ describe("RuleEditor", () => {
     // 第2を追加
     await user.click(checkboxes[1]);
 
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ weekNumbers: [1, 2, 3] }));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        patterns: [{ dayOfWeek: 3, weekNumbers: [1, 2, 3] }],
+      }),
+    );
+  });
+
+  it("nthWeekdayでパターンを追加できる", async () => {
+    const onChange = vi.fn();
+    const rule: ScheduleRule = {
+      type: "nthWeekday",
+      patterns: [{ dayOfWeek: 3, weekNumbers: [1] }],
+    };
+    const user = userEvent.setup();
+
+    render(<RuleEditor rule={rule} onChange={onChange} />);
+
+    await user.click(screen.getByText("+ パターンを追加"));
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "nthWeekday",
+        patterns: [
+          { dayOfWeek: 3, weekNumbers: [1] },
+          { dayOfWeek: 0, weekNumbers: [1] },
+        ],
+      }),
+    );
   });
 
   it("specificDatesルールでDateListEditorが表示される", () => {

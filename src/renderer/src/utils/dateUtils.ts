@@ -3,4 +3,6 @@ export {
   formatDayGreeting,
   getTodayDayOfWeek,
   formatDateToISO,
+  formatShortDate,
+  formatWeekListDate,
 } from "../../../shared/utils/dateUtils";
