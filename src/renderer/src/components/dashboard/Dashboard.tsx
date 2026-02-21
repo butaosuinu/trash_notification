@@ -24,8 +24,8 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
   const tomorrowEntries = getTodayEntries(tomorrow, schedule.entries);
 
   return (
-    <div className="flex h-screen flex-col p-4 pt-2">
-      <div className="titlebar-drag mb-4 flex items-center justify-between pl-16 pt-1">
+    <div className="flex h-screen flex-col">
+      <div className="glass-titlebar titlebar-drag sticky top-0 z-10 flex items-center justify-between pb-3 pl-16 pr-4 pt-3">
         <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
         <div className="titlebar-no-drag">
           <IconButton
@@ -37,7 +37,7 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
         </div>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto">
+      <div className="flex-1 space-y-4 overflow-y-auto p-4">
         <DateTimeDisplay />
         <TrashInfo entries={todayEntries} />
         <TomorrowTrash entries={tomorrowEntries} tomorrow={tomorrow} />
