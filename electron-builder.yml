@@ -1,5 +1,6 @@
 appId: com.butaosuinu.trash-notification
 productName: ゴミ通知
+artifactName: ${name}-${version}-${arch}.${ext}
 copyright: Copyright © 2025 butaosuinu
 
 directories:
