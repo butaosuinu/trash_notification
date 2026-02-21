@@ -1,4 +1,5 @@
 import type { TrashSchedule } from "./schedule";
+import type { NotificationSettings } from "../../../shared/types/notification";
 
 type UpdateStatus =
   | "idle"
@@ -34,6 +35,8 @@ type ElectronAPI = {
   installUpdate: () => Promise<void>;
   onUpdateStatus: (callback: (payload: UpdateStatusPayload) => void) => () => void;
   onUpdateProgress: (callback: (payload: UpdateProgressPayload) => void) => () => void;
+  getNotificationSettings: () => Promise<NotificationSettings>;
+  saveNotificationSettings: (settings: NotificationSettings) => Promise<void>;
 };
 
 declare global {

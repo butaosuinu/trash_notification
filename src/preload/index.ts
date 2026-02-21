@@ -46,6 +46,12 @@ const electronAPI = {
       ipcRenderer.removeListener("updater:progress", listener);
     };
   },
+  getNotificationSettings: async () =>
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- ipcRenderer.invoke returns any
+    await ipcRenderer.invoke("notification:getSettings"),
+  saveNotificationSettings: async (settings: unknown) => {
+    await ipcRenderer.invoke("notification:saveSettings", settings);
+  },
 };
 
 contextBridge.exposeInMainWorld("electronAPI", electronAPI);

@@ -3,7 +3,9 @@ import { join } from "node:path";
 import { registerScheduleHandlers } from "./ipc/scheduleHandlers";
 import { registerGeminiHandlers } from "./ipc/geminiHandlers";
 import { registerUpdaterHandlers } from "./ipc/updaterHandlers";
+import { registerNotificationHandlers } from "./ipc/notificationHandlers";
 import { initUpdater } from "./services/updaterService";
+import { initNotification } from "./services/notificationService";
 import { initLogger, createLogger } from "./services/logger";
 
 let mainWindow: BrowserWindow | null = null;
@@ -70,6 +72,7 @@ void app.whenReady().then(() => {
   registerScheduleHandlers();
   registerGeminiHandlers();
   registerUpdaterHandlers();
+  registerNotificationHandlers();
 
   createWindow();
   createTray();
@@ -79,6 +82,8 @@ void app.whenReady().then(() => {
   if (mainWindow !== null) {
     initUpdater(mainWindow);
   }
+
+  initNotification();
 });
 
 app.on("window-all-closed", () => {
