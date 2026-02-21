@@ -20,10 +20,14 @@ export type BiweeklyRule = {
   referenceDate: string;
 };
 
-export type NthWeekdayRule = {
-  type: "nthWeekday";
+export type NthWeekdayPattern = {
   dayOfWeek: number;
   weekNumbers: number[];
+};
+
+export type NthWeekdayRule = {
+  type: "nthWeekday";
+  patterns: NthWeekdayPattern[];
 };
 
 export type SpecificDatesRule = {

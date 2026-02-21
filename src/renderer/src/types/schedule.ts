@@ -3,6 +3,7 @@ export type {
   TrashScheduleV1,
   WeeklyRule,
   BiweeklyRule,
+  NthWeekdayPattern,
   NthWeekdayRule,
   SpecificDatesRule,
   ScheduleRule,

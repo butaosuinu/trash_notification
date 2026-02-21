@@ -25,10 +25,12 @@ function matchesBiweekly(date: Date, rule: BiweeklyRule): boolean {
 }
 
 function matchesNthWeekday(date: Date, rule: NthWeekdayRule): boolean {
-  if (getDay(date) !== rule.dayOfWeek) return false;
+  const day = getDay(date);
   const dayOfMonth = getDate(date);
   const occurrence = Math.ceil(dayOfMonth / DAYS_PER_WEEK);
-  return rule.weekNumbers.includes(occurrence);
+  return rule.patterns.some(
+    (pattern) => pattern.dayOfWeek === day && pattern.weekNumbers.includes(occurrence),
+  );
 }
 
 function matchesSpecificDates(date: Date, rule: SpecificDatesRule): boolean {

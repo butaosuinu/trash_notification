@@ -37,6 +37,36 @@ export function migrateV1ToV2(v1: TrashScheduleV1): TrashSchedule {
   return { version: SCHEDULE_VERSION, entries };
 }
 
+type LegacyNthWeekdayRule = {
+  type: "nthWeekday";
+  dayOfWeek: number;
+  weekNumbers: number[];
+};
+
+function isLegacyNthWeekday(rule: unknown): rule is LegacyNthWeekdayRule {
+  if (typeof rule !== "object" || rule === null) return false;
+  return (
+    "type" in rule && rule.type === "nthWeekday" && "dayOfWeek" in rule && !("patterns" in rule)
+  );
+}
+
+function migrateNthWeekdayEntry(entry: ScheduleEntry): ScheduleEntry {
+  if (!isLegacyNthWeekday(entry.rule)) return entry;
+  return {
+    ...entry,
+    rule: {
+      type: "nthWeekday",
+      patterns: [{ dayOfWeek: entry.rule.dayOfWeek, weekNumbers: entry.rule.weekNumbers }],
+    },
+  };
+}
+
+export function migrateNthWeekdayRules(schedule: TrashSchedule): TrashSchedule {
+  const needsMigration = schedule.entries.some((e) => isLegacyNthWeekday(e.rule));
+  if (!needsMigration) return schedule;
+  return { ...schedule, entries: schedule.entries.map(migrateNthWeekdayEntry) };
+}
+
 const DEFAULT_SCHEDULE: TrashSchedule = {
   version: SCHEDULE_VERSION,
   entries: [
@@ -73,7 +103,12 @@ const store = new Store<StoreSchema>({
 export function loadSchedule(): TrashSchedule {
   const data = store.get("schedule");
   if (isV2Schedule(data)) {
-    return data;
+    const migrated = migrateNthWeekdayRules(data);
+    if (migrated !== data) {
+      log.info("Migrating nthWeekday rules to patterns format");
+      store.set("schedule", migrated);
+    }
+    return migrated;
   }
 
   log.info("Migrating schedule from V1 to V2");
