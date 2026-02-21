@@ -5,4 +5,6 @@ export {
   formatDateToISO,
   formatShortDate,
   formatWeekListDate,
+  formatTitlebarDate,
+  formatColumnDate,
 } from "../../../shared/utils/dateUtils";

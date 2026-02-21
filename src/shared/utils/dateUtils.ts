@@ -25,3 +25,11 @@ export function formatShortDate(date: Date): string {
 export function formatWeekListDate(date: Date): string {
   return format(date, "M/d（E）", { locale: ja });
 }
+
+export function formatTitlebarDate(date: Date): string {
+  return format(date, "M/d（E）HH:mm", { locale: ja });
+}
+
+export function formatColumnDate(date: Date): string {
+  return format(date, "M/d");
+}
