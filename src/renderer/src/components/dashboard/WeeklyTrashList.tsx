@@ -64,6 +64,7 @@ function WeekDayRow({ day, index, isLast }: WeekDayRowProps) {
 
   return (
     <div
+      data-testid={`weekday-row-${day.dayIndex}`}
       className={`animate-fade-in-stagger flex gap-3 ${getRowStyle(day, isLast)}`}
       style={{ animationDelay: `${index * STAGGER_MS}ms` }}
     >

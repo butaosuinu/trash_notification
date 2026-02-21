@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { WeeklyTrashList } from "../WeeklyTrashList";
 import type { TrashSchedule } from "../../../types/schedule";
 
@@ -85,7 +85,10 @@ describe("WeeklyTrashList", () => {
       ],
     };
     render(<WeeklyTrashList schedule={schedule} />);
-    expect(screen.getAllByText("第3")).toHaveLength(2);
+    const tuesdayRow = screen.getByTestId("weekday-row-2");
+    expect(within(tuesdayRow).getByText("第3")).toBeInTheDocument();
+    const wednesdayRow = screen.getByTestId("weekday-row-3");
+    expect(within(wednesdayRow).getByText("第3")).toBeInTheDocument();
   });
 
   it("同一曜日のnthWeekdayバッジに曜日名が含まれない", () => {

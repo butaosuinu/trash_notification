@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { WeeklySchedule } from "../WeeklySchedule";
 import type { TrashSchedule } from "../../../types/schedule";
 
@@ -92,9 +92,12 @@ describe("WeeklySchedule", () => {
       ],
     };
     render(<WeeklySchedule schedule={schedule} />);
-    expect(screen.getAllByText("資源ゴミ")).toHaveLength(2);
-    expect(screen.getByText("第4")).toBeInTheDocument();
-    expect(screen.getByText("第2")).toBeInTheDocument();
+    const tuesdayColumn = screen.getByTestId("day-column-2");
+    expect(within(tuesdayColumn).getByText("資源ゴミ")).toBeInTheDocument();
+    expect(within(tuesdayColumn).getByText("第4")).toBeInTheDocument();
+    const wednesdayColumn = screen.getByTestId("day-column-3");
+    expect(within(wednesdayColumn).getByText("資源ゴミ")).toBeInTheDocument();
+    expect(within(wednesdayColumn).getByText("第2")).toBeInTheDocument();
   });
 
   it("指定日のスケジュールが今後の指定日セクションに表示される", () => {

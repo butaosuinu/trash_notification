@@ -63,6 +63,7 @@ function DayColumn({ dayName, index, entries, isToday }: DayColumnProps) {
         : "text-frost-text-secondary";
   return (
     <div
+      data-testid={`day-column-${index}`}
       className={`rounded p-2 transition-colors duration-150 ${isToday ? "bg-frost-accent/15 font-bold border border-frost-accent/30" : "bg-frost-glass"}`}
     >
       <div className={`mb-1 ${dayColor}`}>{dayName.charAt(0)}</div>
