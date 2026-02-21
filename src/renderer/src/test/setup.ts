@@ -17,4 +17,10 @@ vi.stubGlobal("electronAPI", {
   onUpdateStatus: vi.fn().mockReturnValue(() => {}),
   // eslint-disable-next-line @typescript-eslint/no-empty-function -- cleanup stub
   onUpdateProgress: vi.fn().mockReturnValue(() => {}),
+  getNotificationSettings: vi.fn().mockResolvedValue({
+    enabled: true,
+    weeklyNotificationTime: "07:00",
+    dayBeforeNotificationTime: "20:00",
+  }),
+  saveNotificationSettings: vi.fn().mockResolvedValue(undefined),
 });

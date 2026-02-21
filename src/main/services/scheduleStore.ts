@@ -1,39 +1,18 @@
 import { randomUUID } from "node:crypto";
 import Store from "electron-store";
 import { createLogger } from "./logger";
+import type { TrashScheduleV1, TrashSchedule, ScheduleEntry } from "../../shared/types/schedule";
+import { SCHEDULE_VERSION } from "../../shared/types/schedule";
+
+export type { TrashSchedule } from "../../shared/types/schedule";
+export { SCHEDULE_VERSION } from "../../shared/types/schedule";
 
 const log = createLogger("scheduleStore");
-
-type TrashDay = {
-  name: string;
-  icon: string;
-};
-
-type WeeklyRule = { type: "weekly"; dayOfWeek: number };
-type BiweeklyRule = { type: "biweekly"; dayOfWeek: number; referenceDate: string };
-type NthWeekdayRule = { type: "nthWeekday"; dayOfWeek: number; weekNumbers: number[] };
-type SpecificDatesRule = { type: "specificDates"; dates: string[] };
-type ScheduleRule = WeeklyRule | BiweeklyRule | NthWeekdayRule | SpecificDatesRule;
-
-type ScheduleEntry = {
-  id: string;
-  trash: TrashDay;
-  rule: ScheduleRule;
-};
-
-type TrashScheduleV1 = Record<string, TrashDay>;
-
-export type TrashSchedule = {
-  version: typeof SCHEDULE_VERSION;
-  entries: ScheduleEntry[];
-};
 
 type StoreSchema = {
   schedule: TrashSchedule | TrashScheduleV1;
   apiKey: string | null;
 };
-
-export const SCHEDULE_VERSION = 2;
 
 const TUESDAY = 2;
 const WEDNESDAY = 3;
@@ -50,13 +29,11 @@ function isV2Schedule(data: unknown): data is TrashSchedule {
 }
 
 export function migrateV1ToV2(v1: TrashScheduleV1): TrashSchedule {
-  const entries: ScheduleEntry[] = Object.entries(v1)
-    .filter(([, trash]) => trash.name !== "")
-    .map(([key, trash]) => ({
-      id: randomUUID(),
-      trash,
-      rule: { type: "weekly" as const, dayOfWeek: Number(key) },
-    }));
+  const entries: ScheduleEntry[] = Object.entries(v1).flatMap(([key, trash]) =>
+    trash !== undefined && trash.name !== ""
+      ? [{ id: randomUUID(), trash, rule: { type: "weekly" as const, dayOfWeek: Number(key) } }]
+      : [],
+  );
   return { version: SCHEDULE_VERSION, entries };
 }
 

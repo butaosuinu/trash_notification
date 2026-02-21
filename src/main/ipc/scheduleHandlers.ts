@@ -6,6 +6,7 @@ import {
   setApiKey,
   type TrashSchedule,
 } from "../services/scheduleStore";
+import { rescheduleNotifications } from "../services/notificationService";
 import { createLogger } from "../services/logger";
 
 const log = createLogger("scheduleHandlers");
@@ -20,6 +21,7 @@ export function registerScheduleHandlers(): void {
     log.debug("schedule:save");
     // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- schedule comes from trusted IPC
     saveSchedule(schedule as TrashSchedule);
+    rescheduleNotifications();
   });
 
   ipcMain.handle("settings:getApiKey", () => {

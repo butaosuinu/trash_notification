@@ -1,6 +1,7 @@
 import { ApiKeyInput } from "./ApiKeyInput";
 import { PdfImport } from "./PdfImport";
 import { ScheduleEditor } from "./ScheduleEditor";
+import { NotificationSettings } from "./NotificationSettings";
 
 type SettingsProps = {
   onBack: () => void;
@@ -24,6 +25,7 @@ export function Settings({ onBack }: SettingsProps) {
         <ApiKeyInput />
         <PdfImport />
         <ScheduleEditor />
+        <NotificationSettings />
       </div>
     </div>
   );
