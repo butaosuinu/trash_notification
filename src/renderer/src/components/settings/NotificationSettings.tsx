@@ -1,7 +1,8 @@
+import { Save, Check } from "lucide-react";
+import { ICON_SIZE, INPUT_CLASS } from "../../constants/styles";
 import { useNotificationSettings } from "../../hooks/useNotificationSettings";
 import { useSaveFeedback } from "../../hooks/useSaveFeedback";
-import { INPUT_CLASS } from "../../constants/styles";
-import { Button } from "../common/Button";
+import { IconButton } from "../common/IconButton";
 import { Card } from "../common/Card";
 import type { NotificationSettings as NotificationSettingsType } from "../../../../shared/types/notification";
 
@@ -61,13 +62,13 @@ function NotificationForm({ settings, onSave, saved }: NotificationFormProps) {
           onSave({ ...settings, dayBeforeNotificationTime: v });
         }}
       />
-      <Button
+      <IconButton
         onClick={() => {
           onSave(settings);
         }}
-      >
-        {saved ? "保存済み" : "保存"}
-      </Button>
+        icon={saved ? <Check size={ICON_SIZE} /> : <Save size={ICON_SIZE} />}
+        label={saved ? "保存済み" : "保存"}
+      />
     </div>
   );
 }

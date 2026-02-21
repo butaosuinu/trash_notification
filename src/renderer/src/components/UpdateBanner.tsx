@@ -1,4 +1,7 @@
+import { RotateCcw, Zap } from "lucide-react";
+import { ICON_SIZE } from "../constants/styles";
 import { useUpdater } from "../hooks/useUpdater";
+import { Tooltip } from "./common/Tooltip";
 
 const PROGRESS_MAX = 100;
 
@@ -7,13 +10,16 @@ function ErrorBanner({ onRetry }: { onRetry: () => void }) {
     <div className="glass rounded-lg border-frost-danger/30 p-3 text-sm text-red-400">
       <div className="flex items-center justify-between">
         <span>アップデート確認に失敗しました</span>
-        <button
-          type="button"
-          onClick={onRetry}
-          className="rounded bg-red-500/15 px-2 py-1 text-xs text-red-400 hover:bg-red-500/25 transition-colors duration-150"
-        >
-          再試行
-        </button>
+        <Tooltip label="再試行">
+          <button
+            type="button"
+            aria-label="再試行"
+            onClick={onRetry}
+            className="rounded bg-red-500/15 p-2 text-red-400 hover:bg-red-500/25 transition-colors duration-150"
+          >
+            <RotateCcw size={ICON_SIZE} />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );
@@ -40,13 +46,16 @@ function ReadyBanner({ version, onInstall }: { version: string | null; onInstall
     <div className="glass rounded-lg border-frost-success/30 p-3 text-sm text-emerald-400">
       <div className="flex items-center justify-between">
         <span>{label}の準備完了</span>
-        <button
-          type="button"
-          onClick={onInstall}
-          className="rounded bg-frost-success px-3 py-1 text-xs text-white hover:bg-emerald-400 transition-colors duration-150"
-        >
-          再起動してインストール
-        </button>
+        <Tooltip label="再起動してインストール">
+          <button
+            type="button"
+            aria-label="再起動してインストール"
+            onClick={onInstall}
+            className="rounded bg-frost-success p-2 text-white hover:bg-emerald-400 transition-colors duration-150"
+          >
+            <Zap size={ICON_SIZE} />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

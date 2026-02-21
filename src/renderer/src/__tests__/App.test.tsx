@@ -17,27 +17,27 @@ describe("App", () => {
   it("デフォルトでDashboardが表示される", () => {
     render(<App />);
     expect(screen.getByText("ゴミ通知")).toBeInTheDocument();
-    expect(screen.getByText("設定")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "設定" })).toBeInTheDocument();
   });
 
   it("設定ボタンクリックでSettings画面に遷移する", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<App />);
 
-    await user.click(screen.getByText("設定"));
+    await user.click(screen.getByRole("button", { name: "設定" }));
 
     expect(screen.getByText("Gemini API キー")).toBeInTheDocument();
-    expect(screen.getByText("戻る")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "戻る" })).toBeInTheDocument();
   });
 
   it("戻るボタンクリックでDashboardに戻る", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<App />);
 
-    await user.click(screen.getByText("設定"));
-    expect(screen.getByText("戻る")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "設定" }));
+    expect(screen.getByRole("button", { name: "戻る" })).toBeInTheDocument();
 
-    await user.click(screen.getByText("戻る"));
+    await user.click(screen.getByRole("button", { name: "戻る" }));
     expect(screen.getByText("ゴミ通知")).toBeInTheDocument();
   });
 });

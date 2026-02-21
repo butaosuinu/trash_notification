@@ -7,7 +7,19 @@ import {
   SCHEDULE_VERSION,
   type TrashSchedule,
 } from "./scheduleStore";
+import type { ScheduleRule } from "../../shared/types/schedule";
 import { createLogger } from "./logger";
+
+type RawPattern = { dayOfWeek?: number; weekNumbers?: number[] };
+
+type RawRule = {
+  type: string;
+  dayOfWeek?: number;
+  weekNumbers?: number[];
+  patterns?: RawPattern[];
+  referenceDate?: string;
+  dates?: string[];
+};
 
 const log = createLogger("geminiService");
 
@@ -51,12 +63,36 @@ function isV2Response(data: unknown): data is TrashSchedule {
   );
 }
 
+function sanitizeRule(raw: RawRule): ScheduleRule {
+  switch (raw.type) {
+    case "nthWeekday":
+      return {
+        type: "nthWeekday",
+        patterns: raw.patterns?.map((p) => ({
+          dayOfWeek: p.dayOfWeek ?? 0,
+          weekNumbers: p.weekNumbers ?? [1],
+        })) ?? [{ dayOfWeek: raw.dayOfWeek ?? 0, weekNumbers: raw.weekNumbers ?? [1] }],
+      };
+    case "specificDates":
+      return { type: "specificDates", dates: raw.dates ?? [] };
+    case "biweekly":
+      return {
+        type: "biweekly",
+        dayOfWeek: raw.dayOfWeek ?? 0,
+        referenceDate: raw.referenceDate ?? "",
+      };
+    default:
+      return { type: "weekly", dayOfWeek: raw.dayOfWeek ?? 0 };
+  }
+}
+
 function assignIds(schedule: TrashSchedule): TrashSchedule {
   return {
     version: SCHEDULE_VERSION,
     entries: schedule.entries.map((entry) => ({
       ...entry,
       id: randomUUID(),
+      rule: sanitizeRule(entry.rule as RawRule),
     })),
   };
 }

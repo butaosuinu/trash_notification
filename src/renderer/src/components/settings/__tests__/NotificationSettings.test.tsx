@@ -43,7 +43,7 @@ describe("NotificationSettings", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("保存")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "保存" })).toBeInTheDocument();
     });
   });
 

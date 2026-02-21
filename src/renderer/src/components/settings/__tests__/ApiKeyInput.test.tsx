@@ -41,7 +41,7 @@ describe("ApiKeyInput", () => {
 
     const input = screen.getByPlaceholderText("API キーを入力");
     await user.type(input, "new-api-key");
-    await user.click(screen.getByText("保存"));
+    await user.click(screen.getByRole("button", { name: "保存" }));
 
     expect(window.electronAPI.setApiKey).toHaveBeenCalledWith("new-api-key");
   });
@@ -55,8 +55,8 @@ describe("ApiKeyInput", () => {
 
     const input = screen.getByPlaceholderText("API キーを入力");
     await user.type(input, "key");
-    await user.click(screen.getByText("保存"));
+    await user.click(screen.getByRole("button", { name: "保存" }));
 
-    await screen.findByText("保存済み");
+    await screen.findByRole("button", { name: "保存済み" });
   });
 });

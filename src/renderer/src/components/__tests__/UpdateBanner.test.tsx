@@ -70,7 +70,7 @@ describe("UpdateBanner", () => {
       progress: 0,
     });
     renderWithStore(store);
-    expect(screen.getByText("再起動してインストール")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "再起動してインストール" })).toBeInTheDocument();
     expect(screen.getByText(/v1\.1\.0/)).toBeInTheDocument();
   });
 
@@ -84,7 +84,7 @@ describe("UpdateBanner", () => {
     });
     renderWithStore(store);
     expect(screen.getByText("アップデート確認に失敗しました")).toBeInTheDocument();
-    expect(screen.getByText("再試行")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "再試行" })).toBeInTheDocument();
   });
 
   it("インストールボタンをクリックするとinstallUpdateが呼ばれる", async () => {
@@ -98,7 +98,7 @@ describe("UpdateBanner", () => {
     });
     renderWithStore(store);
 
-    await user.click(screen.getByText("再起動してインストール"));
+    await user.click(screen.getByRole("button", { name: "再起動してインストール" }));
     expect(window.electronAPI.installUpdate).toHaveBeenCalledOnce();
   });
 
@@ -113,7 +113,7 @@ describe("UpdateBanner", () => {
     });
     renderWithStore(store);
 
-    await user.click(screen.getByText("再試行"));
+    await user.click(screen.getByRole("button", { name: "再試行" }));
     expect(window.electronAPI.checkForUpdates).toHaveBeenCalledOnce();
   });
 });

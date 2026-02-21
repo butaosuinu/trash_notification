@@ -1,6 +1,8 @@
+import { Save, Check } from "lucide-react";
 import { useState, useEffect } from "react";
+import { ICON_SIZE } from "../../constants/styles";
 import { useSaveFeedback } from "../../hooks/useSaveFeedback";
-import { Button } from "../common/Button";
+import { IconButton } from "../common/IconButton";
 import { Card } from "../common/Card";
 
 export function ApiKeyInput() {
@@ -32,13 +34,13 @@ export function ApiKeyInput() {
           placeholder="API キーを入力"
           className="flex-1 rounded border border-frost-input-border bg-frost-input-bg px-3 py-2 text-sm text-frost-text placeholder:text-frost-text-muted focus:border-frost-accent focus:outline-none transition-all duration-150"
         />
-        <Button
+        <IconButton
           onClick={() => {
             void handleSave();
           }}
-        >
-          {saved ? "保存済み" : "保存"}
-        </Button>
+          icon={saved ? <Check size={ICON_SIZE} /> : <Save size={ICON_SIZE} />}
+          label={saved ? "保存済み" : "保存"}
+        />
       </div>
     </Card>
   );
