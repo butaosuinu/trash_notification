@@ -1,8 +1,10 @@
 import electronUpdaterModule from "electron-updater";
 import type { BrowserWindow } from "electron";
 import { app } from "electron";
+import { createLogger } from "./logger";
 
 const { autoUpdater } = electronUpdaterModule;
+const log = createLogger("updater");
 
 type UpdateStatus =
   | "idle"
@@ -47,14 +49,17 @@ function createRendererNotifier(window: BrowserWindow): RendererNotifier {
 
 function setupAutoUpdaterEvents(notifier: RendererNotifier): void {
   autoUpdater.on("checking-for-update", () => {
+    log.debug("Checking for update");
     notifier.sendStatus({ status: "checking" });
   });
 
   autoUpdater.on("update-available", (info) => {
+    log.info("Update available:", info.version);
     notifier.sendStatus({ status: "available", version: info.version });
   });
 
   autoUpdater.on("download-progress", (progress) => {
+    log.debug("Download progress:", progress.percent);
     notifier.sendStatus({ status: "downloading" });
     notifier.sendProgress({
       percent: progress.percent,
@@ -65,14 +70,17 @@ function setupAutoUpdaterEvents(notifier: RendererNotifier): void {
   });
 
   autoUpdater.on("update-downloaded", (info) => {
+    log.info("Update downloaded:", info.version);
     notifier.sendStatus({ status: "ready", version: info.version });
   });
 
   autoUpdater.on("update-not-available", () => {
+    log.debug("No update available");
     notifier.sendStatus({ status: "not-available" });
   });
 
   autoUpdater.on("error", (error) => {
+    log.error("Update error:", error.message);
     notifier.sendStatus({ status: "error", error: error.message });
   });
 }
@@ -89,6 +97,7 @@ export function installUpdate(): void {
 export function initUpdater(window: BrowserWindow): void {
   if (!app.isPackaged) return;
 
+  log.info("Initializing auto-updater");
   const notifier = createRendererNotifier(window);
   setupAutoUpdaterEvents(notifier);
 

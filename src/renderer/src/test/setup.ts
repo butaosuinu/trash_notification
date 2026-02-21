@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
+vi.mock("@/utils/logger");
+
 vi.stubGlobal("electronAPI", {
   getSchedule: vi.fn().mockResolvedValue({ version: 2, entries: [] }),
   saveSchedule: vi.fn().mockResolvedValue(undefined),

@@ -29,6 +29,8 @@ vi.mock("electron-store", () => ({
   })),
 }));
 
+vi.mock("../logger");
+
 describe("geminiService", () => {
   beforeEach(() => {
     vi.clearAllMocks();

@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
 import Store from "electron-store";
+import { createLogger } from "./logger";
+
+const log = createLogger("scheduleStore");
 
 type TrashDay = {
   name: string;
@@ -96,12 +99,14 @@ export function loadSchedule(): TrashSchedule {
     return data;
   }
 
+  log.info("Migrating schedule from V1 to V2");
   const migrated = migrateV1ToV2(data);
   store.set("schedule", migrated);
   return migrated;
 }
 
 export function saveSchedule(schedule: TrashSchedule): void {
+  log.debug("Saving schedule, entries:", schedule.entries.length);
   store.set("schedule", schedule);
 }
 
@@ -110,5 +115,6 @@ export function getApiKey(): string | null {
 }
 
 export function setApiKey(key: string): void {
+  log.debug("API key updated");
   store.set("apiKey", key);
 }

@@ -18,6 +18,8 @@ vi.mock("node:crypto", () => ({
   randomUUID: vi.fn().mockReturnValue("mock-uuid"),
 }));
 
+vi.mock("../logger");
+
 describe("scheduleStore", () => {
   beforeEach(() => {
     vi.clearAllMocks();

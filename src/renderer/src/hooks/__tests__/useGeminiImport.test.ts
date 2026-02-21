@@ -3,6 +3,8 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { useGeminiImport } from "../useGeminiImport";
 import type { TrashSchedule } from "../../types/schedule";
 
+vi.mock("@/utils/logger");
+
 const mockExtractedSchedule: TrashSchedule = {
   version: 2,
   entries: [
