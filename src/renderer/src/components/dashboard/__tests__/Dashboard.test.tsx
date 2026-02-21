@@ -71,7 +71,7 @@ describe("Dashboard", () => {
       </Provider>,
     );
 
-    await user.click(screen.getByText("設定"));
+    await user.click(screen.getByRole("button", { name: "設定" }));
     expect(onOpenSettings).toHaveBeenCalledOnce();
   });
 });

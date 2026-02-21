@@ -1,6 +1,8 @@
+import { FileUp, Wand2, Save, X } from "lucide-react";
+import { ICON_SIZE } from "../../constants/styles";
 import { useGeminiImport } from "../../hooks/useGeminiImport";
 import { useSchedule } from "../../hooks/useSchedule";
-import { Button } from "../common/Button";
+import { IconButton } from "../common/IconButton";
 import { Card } from "../common/Card";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { DAY_NAMES, RULE_TYPE_LABELS } from "../../constants/schedule";
@@ -13,7 +15,8 @@ function describeRule(rule: ScheduleRule): string {
     case "biweekly":
       return `${RULE_TYPE_LABELS.biweekly} ${DAY_NAMES[rule.dayOfWeek]}`;
     case "nthWeekday": {
-      const weeks = rule.weekNumbers.map((n) => `第${String(n)}`).join("・");
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- defend against malformed persisted data
+      const weeks = (rule.weekNumbers ?? []).map((n) => `第${String(n)}`).join("・");
       return `${weeks} ${DAY_NAMES[rule.dayOfWeek]}`;
     }
     case "specificDates":
@@ -48,10 +51,13 @@ function SchedulePreview({ schedule, onConfirm, onCancel }: PreviewProps) {
         </tbody>
       </table>
       <div className="mt-3 flex gap-2">
-        <Button onClick={onConfirm}>保存</Button>
-        <Button variant="secondary" onClick={onCancel}>
-          キャンセル
-        </Button>
+        <IconButton onClick={onConfirm} icon={<Save size={ICON_SIZE} />} label="保存" />
+        <IconButton
+          variant="secondary"
+          onClick={onCancel}
+          icon={<X size={ICON_SIZE} />}
+          label="キャンセル"
+        />
       </div>
     </div>
   );
@@ -71,27 +77,27 @@ export function PdfImport() {
     <Card title="PDF からスケジュールを読み込み">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Button
+          <IconButton
             variant="secondary"
             onClick={() => {
               void selectFile();
             }}
-          >
-            PDF を選択
-          </Button>
+            icon={<FileUp size={ICON_SIZE} />}
+            label="PDF を選択"
+          />
           {filePath !== null && (
             <span className="truncate text-sm text-frost-text-secondary">{filePath}</span>
           )}
         </div>
         {filePath !== null && extractedSchedule === null && !isLoading && (
-          <Button
+          <IconButton
             variant="success"
             onClick={() => {
               void extractSchedule();
             }}
-          >
-            解析
-          </Button>
+            icon={<Wand2 size={ICON_SIZE} />}
+            label="解析"
+          />
         )}
         {isLoading && <LoadingSpinner />}
         {error !== null && <p className="text-sm text-frost-danger">{error}</p>}

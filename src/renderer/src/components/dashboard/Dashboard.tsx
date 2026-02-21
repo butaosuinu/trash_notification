@@ -1,6 +1,8 @@
+import { Settings } from "lucide-react";
+import { ICON_SIZE } from "../../constants/styles";
 import { useSchedule } from "../../hooks/useSchedule";
 import { getTodayEntries } from "../../utils/scheduleMatch";
-import { Button } from "../common/Button";
+import { IconButton } from "../common/IconButton";
 import { DateTimeDisplay } from "./DateTimeDisplay";
 import { TrashInfo } from "./TrashInfo";
 import { WeeklySchedule } from "./WeeklySchedule";
@@ -18,9 +20,12 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
       <div className="titlebar-drag mb-4 flex items-center justify-between pl-16 pt-1">
         <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
         <div className="titlebar-no-drag">
-          <Button variant="nav" onClick={onOpenSettings}>
-            設定
-          </Button>
+          <IconButton
+            variant="nav"
+            onClick={onOpenSettings}
+            icon={<Settings size={ICON_SIZE} />}
+            label="設定"
+          />
         </div>
       </div>
 

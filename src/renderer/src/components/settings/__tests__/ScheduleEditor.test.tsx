@@ -50,9 +50,9 @@ describe("ScheduleEditor", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderScheduleEditor();
 
-    await screen.findByText("エントリーを追加");
+    await screen.findByRole("button", { name: "エントリーを追加" });
 
-    await user.click(screen.getByText("エントリーを追加"));
+    await user.click(screen.getByRole("button", { name: "エントリーを追加" }));
 
     const inputs = screen.getAllByPlaceholderText("ゴミの種類");
     expect(inputs).toHaveLength(3);
@@ -64,7 +64,7 @@ describe("ScheduleEditor", () => {
 
     await screen.findByDisplayValue("燃えるゴミ");
 
-    const deleteButtons = screen.getAllByText("削除");
+    const deleteButtons = screen.getAllByRole("button", { name: "削除" });
     await user.click(deleteButtons[0]);
 
     expect(screen.queryByDisplayValue("燃えるゴミ")).not.toBeInTheDocument();
@@ -91,12 +91,12 @@ describe("ScheduleEditor", () => {
 
     await screen.findByDisplayValue("燃えるゴミ");
 
-    await user.click(screen.getByText("保存"));
+    await user.click(screen.getByRole("button", { name: "保存" }));
 
     await waitFor(() => {
       expect(window.electronAPI.saveSchedule).toHaveBeenCalled();
     });
 
-    await screen.findByText("保存済み");
+    await screen.findByRole("button", { name: "保存済み" });
   });
 });

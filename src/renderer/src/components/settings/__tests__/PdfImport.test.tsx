@@ -40,7 +40,7 @@ describe("PdfImport", () => {
 
   it("PDF選択ボタンが表示される", () => {
     renderPdfImport();
-    expect(screen.getByText("PDF を選択")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "PDF を選択" })).toBeInTheDocument();
   });
 
   it("PDF選択後にファイルパスと解析ボタンが表示される", async () => {
@@ -48,10 +48,10 @@ describe("PdfImport", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderPdfImport();
-    await user.click(screen.getByText("PDF を選択"));
+    await user.click(screen.getByRole("button", { name: "PDF を選択" }));
 
     await screen.findByText("/path/to/schedule.pdf");
-    expect(screen.getByText("解析")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "解析" })).toBeInTheDocument();
   });
 
   it("解析後にプレビューテーブルが表示される", async () => {
@@ -60,11 +60,11 @@ describe("PdfImport", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderPdfImport();
-    await user.click(screen.getByText("PDF を選択"));
+    await user.click(screen.getByRole("button", { name: "PDF を選択" }));
 
-    await screen.findByText("解析");
+    await screen.findByRole("button", { name: "解析" });
 
-    await user.click(screen.getByText("解析"));
+    await user.click(screen.getByRole("button", { name: "解析" }));
 
     await screen.findByText("抽出結果のプレビュー");
     expect(screen.getByText("燃えるゴミ")).toBeInTheDocument();
@@ -77,15 +77,15 @@ describe("PdfImport", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderPdfImport();
-    await user.click(screen.getByText("PDF を選択"));
+    await user.click(screen.getByRole("button", { name: "PDF を選択" }));
 
-    await screen.findByText("解析");
+    await screen.findByRole("button", { name: "解析" });
 
-    await user.click(screen.getByText("解析"));
+    await user.click(screen.getByRole("button", { name: "解析" }));
 
-    await screen.findByText("キャンセル");
+    await screen.findByRole("button", { name: "キャンセル" });
 
-    await user.click(screen.getByText("キャンセル"));
+    await user.click(screen.getByRole("button", { name: "キャンセル" }));
 
     await waitFor(() => {
       expect(screen.queryByText("抽出結果のプレビュー")).not.toBeInTheDocument();
@@ -99,11 +99,11 @@ describe("PdfImport", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderPdfImport();
-    await user.click(screen.getByText("PDF を選択"));
+    await user.click(screen.getByRole("button", { name: "PDF を選択" }));
 
-    await screen.findByText("解析");
+    await screen.findByRole("button", { name: "解析" });
 
-    await user.click(screen.getByText("解析"));
+    await user.click(screen.getByRole("button", { name: "解析" }));
 
     await screen.findByText("API接続エラー");
   });
@@ -114,15 +114,15 @@ describe("PdfImport", () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     renderPdfImport();
-    await user.click(screen.getByText("PDF を選択"));
+    await user.click(screen.getByRole("button", { name: "PDF を選択" }));
 
-    await screen.findByText("解析");
+    await screen.findByRole("button", { name: "解析" });
 
-    await user.click(screen.getByText("解析"));
+    await user.click(screen.getByRole("button", { name: "解析" }));
 
-    await screen.findByText("保存");
+    await screen.findByRole("button", { name: "保存" });
 
-    await user.click(screen.getByText("保存"));
+    await user.click(screen.getByRole("button", { name: "保存" }));
 
     await waitFor(() => {
       expect(window.electronAPI.saveSchedule).toHaveBeenCalledWith(extractedSchedule);

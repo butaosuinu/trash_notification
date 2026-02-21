@@ -14,7 +14,7 @@ describe("DateListEditor", () => {
   it("日付がない場合はリストが表示されない", () => {
     render(<DateListEditor dates={[]} onChange={vi.fn()} />);
 
-    expect(screen.queryByText("x")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "削除" })).not.toBeInTheDocument();
   });
 
   it("日付を追加できる", async () => {
@@ -26,18 +26,18 @@ describe("DateListEditor", () => {
     const dateInput = screen.getByDisplayValue("");
     await user.clear(dateInput);
     await user.type(dateInput, "2026-05-10");
-    await user.click(screen.getByText("追加"));
+    await user.click(screen.getByRole("button", { name: "追加" }));
 
     expect(onChange).toHaveBeenCalledWith(["2026-05-10"]);
   });
 
-  it("xボタンで日付を削除できる", async () => {
+  it("削除ボタンで日付を削除できる", async () => {
     const onChange = vi.fn();
     const user = userEvent.setup();
 
     render(<DateListEditor dates={["2026-03-15", "2026-04-20"]} onChange={onChange} />);
 
-    const deleteButtons = screen.getAllByText("x");
+    const deleteButtons = screen.getAllByRole("button", { name: "削除" });
     await user.click(deleteButtons[0]);
 
     expect(onChange).toHaveBeenCalledWith(["2026-04-20"]);
@@ -52,7 +52,7 @@ describe("DateListEditor", () => {
     const dateInput = screen.getByDisplayValue("");
     await user.clear(dateInput);
     await user.type(dateInput, "2026-03-15");
-    await user.click(screen.getByText("追加"));
+    await user.click(screen.getByRole("button", { name: "追加" }));
 
     expect(onChange).not.toHaveBeenCalled();
   });

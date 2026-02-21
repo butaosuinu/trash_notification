@@ -1,12 +1,13 @@
+import { PlusCircle, Save, Check, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { ICON_SIZE, INPUT_CLASS } from "../../constants/styles";
 import { useSchedule } from "../../hooks/useSchedule";
 import { useSaveFeedback } from "../../hooks/useSaveFeedback";
 import { TRASH_ICONS, TRASH_ICON_LABELS } from "../../constants/schedule";
 import type { ScheduleEntry, ScheduleRule } from "../../types/schedule";
 import { SCHEDULE_VERSION } from "../../types/schedule";
 import { RuleEditor } from "./RuleEditor";
-import { INPUT_CLASS } from "../../constants/styles";
-import { Button } from "../common/Button";
+import { IconButton } from "../common/IconButton";
 import { Card } from "../common/Card";
 const ICON_OPTIONS = ["", ...Object.keys(TRASH_ICONS)];
 
@@ -35,10 +36,17 @@ type ScheduleActionsProps = {
 function ScheduleActions({ onAdd, onSave, saved }: ScheduleActionsProps) {
   return (
     <div className="mt-3 flex gap-2">
-      <Button variant="secondary" onClick={onAdd}>
-        エントリーを追加
-      </Button>
-      <Button onClick={onSave}>{saved ? "保存済み" : "保存"}</Button>
+      <IconButton
+        variant="secondary"
+        onClick={onAdd}
+        icon={<PlusCircle size={ICON_SIZE} />}
+        label="エントリーを追加"
+      />
+      <IconButton
+        onClick={onSave}
+        icon={saved ? <Check size={ICON_SIZE} /> : <Save size={ICON_SIZE} />}
+        label={saved ? "保存済み" : "保存"}
+      />
     </div>
   );
 }
@@ -100,9 +108,12 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
             </option>
           ))}
         </select>
-        <Button variant="danger-ghost" onClick={onRemove}>
-          削除
-        </Button>
+        <IconButton
+          variant="danger-ghost"
+          onClick={onRemove}
+          icon={<Trash2 size={ICON_SIZE} />}
+          label="削除"
+        />
       </div>
       <RuleEditor rule={entry.rule} onChange={onRuleChange} />
     </div>
