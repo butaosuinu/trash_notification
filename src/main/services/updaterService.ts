@@ -40,8 +40,10 @@ function sendProgressToRenderer(payload: UpdateProgressPayload): void {
 }
 
 function setupAutoUpdaterEvents(): void {
+  /* eslint-disable functional/immutable-data -- external library configuration */
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
+  /* eslint-enable functional/immutable-data */
 
   autoUpdater.on("checking-for-update", () => {
     sendStatusToRenderer({ status: "checking" });
