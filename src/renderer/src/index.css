@@ -155,4 +155,8 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  .animate-fade-in-stagger {
+    animation: fade-in 0.2s ease-out both;
+  }
 }

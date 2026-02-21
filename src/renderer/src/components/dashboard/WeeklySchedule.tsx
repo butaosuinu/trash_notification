@@ -18,7 +18,7 @@ function getEntriesForDayOfWeek(entries: ScheduleEntry[], dayOfWeek: number): Sc
 function getRuleBadge(entry: ScheduleEntry): string | null {
   if (entry.rule.type === "biweekly") return RULE_TYPE_LABELS.biweekly;
   if (entry.rule.type === "nthWeekday") {
-    return entry.rule.weekNumbers.map((n) => `第${String(n)}`).join("・");
+    return (entry.rule.weekNumbers ?? []).map((n) => `第${String(n)}`).join("・");
   }
   return null;
 }

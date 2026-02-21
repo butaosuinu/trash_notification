@@ -28,7 +28,7 @@ function matchesNthWeekday(date: Date, rule: NthWeekdayRule): boolean {
   if (getDay(date) !== rule.dayOfWeek) return false;
   const dayOfMonth = getDate(date);
   const occurrence = Math.ceil(dayOfMonth / DAYS_PER_WEEK);
-  return rule.weekNumbers.includes(occurrence);
+  return (rule.weekNumbers ?? []).includes(occurrence);
 }
 
 function matchesSpecificDates(date: Date, rule: SpecificDatesRule): boolean {
