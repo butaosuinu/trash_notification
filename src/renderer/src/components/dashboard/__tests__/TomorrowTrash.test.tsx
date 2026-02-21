@@ -34,6 +34,8 @@ describe("TomorrowTrash", () => {
   });
 
   it("第N曜日ルールのバッジが表示される", () => {
+    // 2026-02-19 木曜日
+    const thursday = new Date(2026, 1, 19);
     const entries: ScheduleEntry[] = [
       {
         id: "1",
@@ -41,7 +43,7 @@ describe("TomorrowTrash", () => {
         rule: { type: "nthWeekday", patterns: [{ dayOfWeek: THURSDAY, weekNumbers: [1, 3] }] },
       },
     ];
-    render(<TomorrowTrash entries={entries} tomorrow={new Date()} />);
+    render(<TomorrowTrash entries={entries} tomorrow={thursday} />);
     expect(screen.getByText("第1・第3")).toBeInTheDocument();
   });
 

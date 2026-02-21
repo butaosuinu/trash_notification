@@ -64,6 +64,7 @@ function WeekDayRow({ day, index, isLast }: WeekDayRowProps) {
 
   return (
     <div
+      data-testid={`weekday-row-${day.dayIndex}`}
       className={`animate-fade-in-stagger flex gap-3 ${getRowStyle(day, isLast)}`}
       style={{ animationDelay: `${index * STAGGER_MS}ms` }}
     >
@@ -83,7 +84,7 @@ function WeekDayRow({ day, index, isLast }: WeekDayRowProps) {
                   {(TRASH_ICONS[entry.trash.icon] as string | undefined) ?? ""}
                 </span>
                 <span className="text-sm text-frost-text">{entry.trash.name}</span>
-                <RuleBadge rule={entry.rule} />
+                <RuleBadge rule={entry.rule} dayOfWeek={day.dayIndex} />
               </div>
             ))}
           </div>

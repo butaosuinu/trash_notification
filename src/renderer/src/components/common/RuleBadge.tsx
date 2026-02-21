@@ -7,10 +7,18 @@ const BADGE_STYLES: Record<string, string> = {
   specificDates: "bg-frost-cyan/15 text-frost-cyan border-frost-cyan/30",
 };
 
-function getBadgeLabel(rule: ScheduleRule): string | null {
+function getBadgeLabel(rule: ScheduleRule, dayOfWeek?: number): string | null {
   if (rule.type === "weekly") return null;
   if (rule.type === "nthWeekday") {
     const { patterns } = rule;
+    if (dayOfWeek !== undefined) {
+      const weekNumbers = patterns
+        .filter((p) => p.dayOfWeek === dayOfWeek)
+        .flatMap((p) => p.weekNumbers)
+        .toSorted((a, b) => a - b);
+      if (weekNumbers.length === 0) return null;
+      return weekNumbers.map((n: number) => `第${String(n)}`).join("・");
+    }
     const isAllSameDay = patterns.every((p) => p.dayOfWeek === patterns[0].dayOfWeek);
     if (isAllSameDay) {
       const allWeekNumbers = [...new Set(patterns.flatMap((p) => p.weekNumbers))].toSorted(
@@ -27,10 +35,11 @@ function getBadgeLabel(rule: ScheduleRule): string | null {
 
 type RuleBadgeProps = {
   readonly rule: ScheduleRule;
+  readonly dayOfWeek?: number;
 };
 
-export function RuleBadge({ rule }: RuleBadgeProps) {
-  const label = getBadgeLabel(rule);
+export function RuleBadge({ rule, dayOfWeek }: RuleBadgeProps) {
+  const label = getBadgeLabel(rule, dayOfWeek);
   if (label === null) return null;
 
   const style = BADGE_STYLES[rule.type] ?? "";

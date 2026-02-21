@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { WeeklyTrashList } from "../WeeklyTrashList";
 import type { TrashSchedule } from "../../../types/schedule";
 
@@ -66,7 +66,7 @@ describe("WeeklyTrashList", () => {
     expect(emptyLabels.length).toBe(7);
   });
 
-  it("複数曜日のnthWeekdayバッジに曜日名が含まれる", () => {
+  it("複数曜日のnthWeekdayバッジが曜日ごとに分離して表示される", () => {
     // 2026-02-17は第3火曜、2026-02-18は第3水曜
     const schedule: TrashSchedule = {
       version: 2,
@@ -85,7 +85,10 @@ describe("WeeklyTrashList", () => {
       ],
     };
     render(<WeeklyTrashList schedule={schedule} />);
-    expect(screen.getAllByText("第3水・第3火")).toHaveLength(2);
+    const tuesdayRow = screen.getByTestId("weekday-row-2");
+    expect(within(tuesdayRow).getByText("第3")).toBeInTheDocument();
+    const wednesdayRow = screen.getByTestId("weekday-row-3");
+    expect(within(wednesdayRow).getByText("第3")).toBeInTheDocument();
   });
 
   it("同一曜日のnthWeekdayバッジに曜日名が含まれない", () => {
