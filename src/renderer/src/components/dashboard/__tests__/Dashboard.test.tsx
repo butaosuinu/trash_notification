@@ -42,7 +42,7 @@ describe("Dashboard", () => {
       </Provider>,
     );
 
-    await screen.findByText("今日の収集するゴミ");
+    await screen.findByText("今日");
     expect(screen.getAllByText("燃えるゴミ").length).toBeGreaterThanOrEqual(1);
   });
 
@@ -58,7 +58,18 @@ describe("Dashboard", () => {
       </Provider>,
     );
 
-    await screen.findByText("今日のゴミ回収はありません");
+    const emptyMessages = await screen.findAllByText("回収はありません");
+    expect(emptyMessages.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("タイトルバーに日時が表示される", async () => {
+    render(
+      <Provider>
+        <Dashboard onOpenSettings={vi.fn()} />
+      </Provider>,
+    );
+
+    await screen.findByText("2/17（火）10:00");
   });
 
   it("設定ボタンがonOpenSettingsを呼ぶ", async () => {

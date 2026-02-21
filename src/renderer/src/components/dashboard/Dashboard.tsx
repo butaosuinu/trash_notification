@@ -1,13 +1,12 @@
 import { addDays } from "date-fns";
 import { Settings } from "lucide-react";
 import { ICON_SIZE } from "../../constants/styles";
+import { useDateTime } from "../../hooks/useDateTime";
 import { useSchedule } from "../../hooks/useSchedule";
+import { formatTitlebarDate } from "../../utils/dateUtils";
 import { getTodayEntries } from "../../utils/scheduleMatch";
 import { IconButton } from "../common/IconButton";
-import { DateTimeDisplay } from "./DateTimeDisplay";
-import { TrashInfo } from "./TrashInfo";
-import { TomorrowTrash } from "./TomorrowTrash";
-import { WeeklyTrashList } from "./WeeklyTrashList";
+import { TodayTomorrowCard } from "./TodayTomorrowCard";
 import { WeeklySchedule } from "./WeeklySchedule";
 
 const TOMORROW_OFFSET = 1;
@@ -18,7 +17,7 @@ type DashboardProps = {
 
 export function Dashboard({ onOpenSettings }: DashboardProps) {
   const { schedule } = useSchedule();
-  const now = new Date();
+  const now = useDateTime();
   const tomorrow = addDays(now, TOMORROW_OFFSET);
   const todayEntries = getTodayEntries(now, schedule.entries);
   const tomorrowEntries = getTodayEntries(tomorrow, schedule.entries);
@@ -26,7 +25,10 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
   return (
     <div className="flex h-screen flex-col">
       <div className="glass-titlebar titlebar-drag sticky top-0 z-10 flex items-center justify-between pb-3 pl-16 pr-4 pt-3">
-        <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
+        <div className="flex items-baseline gap-2">
+          <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
+          <span className="text-xs text-frost-text-secondary">{formatTitlebarDate(now)}</span>
+        </div>
         <div className="titlebar-no-drag">
           <IconButton
             variant="nav"
@@ -38,10 +40,11 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
       </div>
 
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        <DateTimeDisplay />
-        <TrashInfo entries={todayEntries} />
-        <TomorrowTrash entries={tomorrowEntries} tomorrow={tomorrow} />
-        <WeeklyTrashList schedule={schedule} />
+        <TodayTomorrowCard
+          todayEntries={todayEntries}
+          tomorrowEntries={tomorrowEntries}
+          tomorrow={tomorrow}
+        />
         <WeeklySchedule schedule={schedule} />
       </div>
     </div>
