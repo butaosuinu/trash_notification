@@ -43,7 +43,8 @@ function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
     <div className="flex flex-wrap gap-2">
       {WEEK_NUMBER_LABELS.map((label, i) => {
         const weekNum = i + 1;
-        const checked = rule.weekNumbers.includes(weekNum);
+        const { weekNumbers } = rule;
+        const checked = weekNumbers.includes(weekNum);
         return (
           <label key={label} className="flex items-center gap-1 text-sm text-frost-text-secondary">
             <input
@@ -51,8 +52,8 @@ function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
               checked={checked}
               onChange={() => {
                 const updated = checked
-                  ? rule.weekNumbers.filter((n) => n !== weekNum)
-                  : [...rule.weekNumbers, weekNum].toSorted((a, b) => a - b);
+                  ? weekNumbers.filter((n) => n !== weekNum)
+                  : [...weekNumbers, weekNum].toSorted((a, b) => a - b);
                 onChange({ ...rule, weekNumbers: updated });
               }}
             />
