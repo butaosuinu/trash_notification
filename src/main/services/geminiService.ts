@@ -2,6 +2,9 @@ import { GoogleGenAI } from "@google/genai";
 import * as fs from "node:fs";
 import { randomUUID } from "node:crypto";
 import { migrateV1ToV2, SCHEDULE_VERSION, type TrashSchedule } from "./scheduleStore";
+import { createLogger } from "./logger";
+
+const log = createLogger("geminiService");
 
 const EXTRACTION_PROMPT = `これは日本の自治体が配布しているゴミ収集カレンダーのPDFです。
 ゴミ回収スケジュールを抽出してください。
@@ -75,6 +78,7 @@ export async function extractScheduleFromPdf(
 
   const pdfBuffer = fs.readFileSync(filePath);
   const base64Data = pdfBuffer.toString("base64");
+  log.info("Sending PDF to Gemini API, size:", pdfBuffer.length);
 
   const response = await client.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -95,5 +99,6 @@ export async function extractScheduleFromPdf(
   });
 
   const text = response.text ?? "";
+  log.debug("Gemini response length:", text.length);
   return parseScheduleJson(text);
 }

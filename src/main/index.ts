@@ -4,6 +4,7 @@ import { registerScheduleHandlers } from "./ipc/scheduleHandlers";
 import { registerGeminiHandlers } from "./ipc/geminiHandlers";
 import { registerUpdaterHandlers } from "./ipc/updaterHandlers";
 import { initUpdater } from "./services/updaterService";
+import { initLogger, createLogger } from "./services/logger";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
@@ -63,12 +64,17 @@ function createTray(): void {
 }
 
 void app.whenReady().then(() => {
+  initLogger();
+  const log = createLogger("main");
+
   registerScheduleHandlers();
   registerGeminiHandlers();
   registerUpdaterHandlers();
 
   createWindow();
   createTray();
+
+  log.info("App ready");
 
   if (mainWindow !== null) {
     initUpdater(mainWindow);
