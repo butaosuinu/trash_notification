@@ -1,4 +1,5 @@
 import type { ScheduleEntry } from "../../types/schedule";
+import { Card } from "../common/Card";
 import { TrashIcon } from "../common/TrashIcon";
 
 type TrashInfoProps = {
@@ -7,8 +8,7 @@ type TrashInfoProps = {
 
 export function TrashInfo({ entries }: TrashInfoProps) {
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
-      <h2 className="mb-2 text-sm font-medium text-gray-500">今日の収集するゴミ</h2>
+    <Card title="今日の収集するゴミ" titleAs="h2">
       {entries.length > 0 ? (
         <div className="space-y-2">
           {entries.map((entry) => (
@@ -21,6 +21,6 @@ export function TrashInfo({ entries }: TrashInfoProps) {
       ) : (
         <p className="text-gray-500">今日のゴミ回収はありません</p>
       )}
-    </div>
+    </Card>
   );
 }

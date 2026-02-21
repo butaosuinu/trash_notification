@@ -1,5 +1,7 @@
 import { useGeminiImport } from "../../hooks/useGeminiImport";
 import { useSchedule } from "../../hooks/useSchedule";
+import { Button } from "../common/Button";
+import { Card } from "../common/Card";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { DAY_NAMES, RULE_TYPE_LABELS } from "../../constants/schedule";
 import type { TrashSchedule, ScheduleRule } from "../../types/schedule";
@@ -46,20 +48,10 @@ function SchedulePreview({ schedule, onConfirm, onCancel }: PreviewProps) {
         </tbody>
       </table>
       <div className="mt-3 flex gap-2">
-        <button
-          type="button"
-          onClick={onConfirm}
-          className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
-        >
-          保存
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
-        >
+        <Button onClick={onConfirm}>保存</Button>
+        <Button variant="secondary" onClick={onCancel}>
           キャンセル
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -76,31 +68,28 @@ export function PdfImport() {
   };
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
-      <h3 className="mb-2 text-sm font-medium text-gray-500">PDF からスケジュールを読み込み</h3>
+    <Card title="PDF からスケジュールを読み込み">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={() => {
               void selectFile();
             }}
-            className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
           >
             PDF を選択
-          </button>
+          </Button>
           {filePath !== null && <span className="truncate text-sm text-gray-600">{filePath}</span>}
         </div>
         {filePath !== null && extractedSchedule === null && !isLoading && (
-          <button
-            type="button"
+          <Button
+            variant="success"
             onClick={() => {
               void extractSchedule();
             }}
-            className="rounded bg-green-500 px-4 py-2 text-sm text-white hover:bg-green-600"
           >
             解析
-          </button>
+          </Button>
         )}
         {isLoading && <LoadingSpinner />}
         {error !== null && <p className="text-sm text-red-500">{error}</p>}
@@ -112,6 +101,6 @@ export function PdfImport() {
           />
         )}
       </div>
-    </div>
+    </Card>
   );
 }
