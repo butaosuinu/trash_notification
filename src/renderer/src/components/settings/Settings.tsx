@@ -13,7 +13,7 @@ type SettingsProps = {
 export function Settings({ onBack }: SettingsProps) {
   return (
     <div className="h-screen overflow-y-auto">
-      <div className="glass-titlebar titlebar-drag sticky top-0 z-10 flex items-center gap-3 pb-3 pl-16 pr-4 pt-3">
+      <div className="glass-titlebar titlebar-drag sticky top-0 z-10 flex items-center gap-3 pb-3 pl-20 pr-4 pt-3">
         <div className="titlebar-no-drag">
           <IconButton
             variant="nav"
