@@ -1,6 +1,7 @@
 import love from 'eslint-config-love';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import functional from 'eslint-plugin-functional';
 import oxlint from 'eslint-plugin-oxlint';
 import testingLibrary from 'eslint-plugin-testing-library';
 
@@ -30,6 +31,7 @@ export default [
       ...love.plugins,
       react,
       'react-hooks': reactHooks,
+      functional,
     },
     rules: {
       ...love.rules,
@@ -74,6 +76,18 @@ export default [
         },
       ],
       complexity: ['error', { max: 15 }],
+      'functional/no-classes': 'error',
+      'functional/no-this-expressions': 'error',
+      'functional/no-class-inheritance': 'error',
+      'functional/no-let': 'error',
+      'functional/no-loop-statements': 'error',
+      'functional/immutable-data': ['error', { ignoreImmediateMutation: true }],
+    },
+  },
+  {
+    files: ['src/main/**/*.ts'],
+    rules: {
+      'functional/no-let': 'warn',
     },
   },
   {
@@ -97,6 +111,9 @@ export default [
       '@typescript-eslint/no-magic-numbers': 'off',
       'max-lines-per-function': 'off',
       'unicorn/no-useless-undefined': 'off',
+      'functional/no-let': 'off',
+      'functional/immutable-data': 'off',
+      'functional/no-loop-statements': 'off',
     },
   },
 ];

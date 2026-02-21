@@ -1,5 +1,5 @@
 import { getDay } from "date-fns";
-import type { TrashSchedule, ScheduleEntry } from "../../types/schedule";
+import type { TrashSchedule, ScheduleEntry, SpecificDatesRule } from "../../types/schedule";
 import { DAY_NAMES, TRASH_ICONS, RULE_TYPE_LABELS } from "../../constants/schedule";
 import { formatDateToISO } from "../../utils/dateUtils";
 
@@ -26,15 +26,16 @@ type UpcomingDate = { entry: ScheduleEntry; date: string };
 
 function getUpcomingSpecificDates(entries: ScheduleEntry[]): UpcomingDate[] {
   const today = formatDateToISO(new Date());
-  const results: UpcomingDate[] = [];
-  for (const entry of entries) {
-    if (entry.rule.type !== "specificDates") continue;
-    for (const date of entry.rule.dates) {
-      if (date >= today) results.push({ entry, date });
-    }
-  }
-  results.sort((a, b) => a.date.localeCompare(b.date));
-  return results.slice(0, UPCOMING_DAYS_LIMIT);
+  return entries
+    .filter(
+      (entry): entry is ScheduleEntry & { rule: SpecificDatesRule } =>
+        entry.rule.type === "specificDates",
+    )
+    .flatMap((entry) =>
+      entry.rule.dates.filter((date) => date >= today).map((date) => ({ entry, date })),
+    )
+    .toSorted((a, b) => a.date.localeCompare(b.date))
+    .slice(0, UPCOMING_DAYS_LIMIT);
 }
 
 type DayColumnProps = {

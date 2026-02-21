@@ -132,10 +132,11 @@ type RuleEditorProps = { rule: ScheduleRule; onChange: (rule: ScheduleRule) => v
 export function RuleEditor({ rule, onChange }: RuleEditorProps) {
   const handleTypeChange = (newType: string) => {
     if (newType === rule.type) return;
-    const newRule = createDefaultRule(newType);
-    if ("dayOfWeek" in rule && "dayOfWeek" in newRule) {
-      (newRule as { dayOfWeek: number }).dayOfWeek = rule.dayOfWeek;
-    }
+    const defaultRule = createDefaultRule(newType);
+    const newRule =
+      "dayOfWeek" in rule && "dayOfWeek" in defaultRule
+        ? { ...defaultRule, dayOfWeek: rule.dayOfWeek }
+        : defaultRule;
     onChange(newRule);
   };
 

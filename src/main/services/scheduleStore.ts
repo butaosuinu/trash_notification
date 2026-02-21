@@ -47,16 +47,13 @@ function isV2Schedule(data: unknown): data is TrashSchedule {
 }
 
 export function migrateV1ToV2(v1: TrashScheduleV1): TrashSchedule {
-  const entries: ScheduleEntry[] = [];
-  for (const [key, trash] of Object.entries(v1)) {
-    if (trash.name !== "") {
-      entries.push({
-        id: randomUUID(),
-        trash,
-        rule: { type: "weekly", dayOfWeek: Number(key) },
-      });
-    }
-  }
+  const entries: ScheduleEntry[] = Object.entries(v1)
+    .filter(([, trash]) => trash.name !== "")
+    .map(([key, trash]) => ({
+      id: randomUUID(),
+      trash,
+      rule: { type: "weekly" as const, dayOfWeek: Number(key) },
+    }));
   return { version: SCHEDULE_VERSION, entries };
 }
 
