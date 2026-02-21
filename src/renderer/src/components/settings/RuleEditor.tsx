@@ -43,7 +43,7 @@ function WeekNumberPicker({ rule, onChange }: WeekNumberPickerProps) {
     <div className="flex flex-wrap gap-2">
       {WEEK_NUMBER_LABELS.map((label, i) => {
         const weekNum = i + 1;
-        const weekNumbers = rule.weekNumbers ?? [];
+        const { weekNumbers } = rule;
         const checked = weekNumbers.includes(weekNum);
         return (
           <label key={label} className="flex items-center gap-1 text-sm text-frost-text-secondary">

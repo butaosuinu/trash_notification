@@ -1,6 +1,6 @@
 import { addDays, startOfWeek, isSameDay } from "date-fns";
 import type { TrashSchedule, ScheduleEntry } from "../../types/schedule";
-import { TRASH_ICONS } from "../../constants/schedule";
+import { TRASH_ICONS, SATURDAY_INDEX, STAGGER_MS } from "../../constants/schedule";
 import { formatWeekListDate } from "../../utils/dateUtils";
 import { getTodayEntries } from "../../utils/scheduleMatch";
 import { Card } from "../common/Card";
@@ -8,8 +8,6 @@ import { RuleBadge } from "../common/RuleBadge";
 
 const DAYS_IN_WEEK = 7;
 const SUNDAY_INDEX = 0;
-const SATURDAY_INDEX = 6;
-const STAGGER_MS = 50;
 
 type WeekDay = {
   readonly date: Date;

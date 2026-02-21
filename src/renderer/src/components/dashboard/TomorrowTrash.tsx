@@ -1,4 +1,3 @@
-import { addDays } from "date-fns";
 import type { ScheduleEntry } from "../../types/schedule";
 import { formatShortDate } from "../../utils/dateUtils";
 import { Card } from "../common/Card";
@@ -7,10 +6,10 @@ import { RuleBadge } from "../common/RuleBadge";
 
 type TomorrowTrashProps = {
   readonly entries: ScheduleEntry[];
+  readonly tomorrow: Date;
 };
 
-export function TomorrowTrash({ entries }: TomorrowTrashProps) {
-  const tomorrow = addDays(new Date(), 1);
+export function TomorrowTrash({ entries, tomorrow }: TomorrowTrashProps) {
   const dateLabel = formatShortDate(tomorrow);
 
   return (

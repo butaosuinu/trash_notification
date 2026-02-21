@@ -3,16 +3,20 @@ import { render, screen } from "@testing-library/react";
 import { TomorrowTrash } from "../TomorrowTrash";
 import type { ScheduleEntry } from "../../../types/schedule";
 
+const TUESDAY = 2;
+const WEDNESDAY = 3;
+const THURSDAY = 4;
+
 describe("TomorrowTrash", () => {
   it("ゴミの種類が表示される", () => {
     const entries: ScheduleEntry[] = [
       {
         id: "1",
         trash: { name: "燃えるゴミ", icon: "burn" },
-        rule: { type: "weekly", dayOfWeek: 2 },
+        rule: { type: "weekly", dayOfWeek: TUESDAY },
       },
     ];
-    render(<TomorrowTrash entries={entries} />);
+    render(<TomorrowTrash entries={entries} tomorrow={new Date()} />);
     expect(screen.getByText("明日の収集するゴミ")).toBeInTheDocument();
     expect(screen.getByText("燃えるゴミ")).toBeInTheDocument();
   });
@@ -22,10 +26,10 @@ describe("TomorrowTrash", () => {
       {
         id: "1",
         trash: { name: "ビン", icon: "bottle" },
-        rule: { type: "biweekly", dayOfWeek: 3, referenceDate: "2026-01-07" },
+        rule: { type: "biweekly", dayOfWeek: WEDNESDAY, referenceDate: "2026-01-07" },
       },
     ];
-    render(<TomorrowTrash entries={entries} />);
+    render(<TomorrowTrash entries={entries} tomorrow={new Date()} />);
     expect(screen.getByText("隔週")).toBeInTheDocument();
   });
 
@@ -34,15 +38,15 @@ describe("TomorrowTrash", () => {
       {
         id: "1",
         trash: { name: "古紙", icon: "paper" },
-        rule: { type: "nthWeekday", dayOfWeek: 4, weekNumbers: [1, 3] },
+        rule: { type: "nthWeekday", dayOfWeek: THURSDAY, weekNumbers: [1, 3] },
       },
     ];
-    render(<TomorrowTrash entries={entries} />);
+    render(<TomorrowTrash entries={entries} tomorrow={new Date()} />);
     expect(screen.getByText("第1・第3")).toBeInTheDocument();
   });
 
   it("エントリーが空の場合は収集なしメッセージが表示される", () => {
-    render(<TomorrowTrash entries={[]} />);
+    render(<TomorrowTrash entries={[]} tomorrow={new Date()} />);
     expect(screen.getByText("明日のゴミ回収はありません")).toBeInTheDocument();
   });
 });

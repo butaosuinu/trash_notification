@@ -10,7 +10,7 @@ const BADGE_STYLES: Record<string, string> = {
 function getBadgeLabel(rule: ScheduleRule): string | null {
   if (rule.type === "weekly") return null;
   if (rule.type === "nthWeekday") {
-    return (rule.weekNumbers ?? []).map((n) => `第${String(n)}`).join("・");
+    return rule.weekNumbers.map((n) => `第${String(n)}`).join("・");
   }
   return RULE_TYPE_LABELS[rule.type] ?? null;
 }
