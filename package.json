@@ -27,6 +27,8 @@
     "dist:win": "pnpm run build && electron-builder --win"
   },
   "dependencies": {
+    "@fontsource-variable/m-plus-1": "^5.2.9",
+    "@fontsource-variable/outfit": "^5.2.8",
     "@google/genai": "^1.0.0",
     "date-fns": "^4.1.0",
     "electron-log": "^5.4.3",

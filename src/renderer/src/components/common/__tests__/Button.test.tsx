@@ -24,7 +24,7 @@ describe("Button", () => {
   it("デフォルトの variant は primary", () => {
     render(<Button onClick={noop}>保存</Button>);
     const button = screen.getByText("保存");
-    expect(button.className).toContain("bg-blue-500");
+    expect(button.className).toContain("bg-frost-accent/20");
   });
 
   it("variant に応じたクラスが適用される", () => {
@@ -34,7 +34,7 @@ describe("Button", () => {
       </Button>,
     );
     const button = screen.getByText("キャンセル");
-    expect(button.className).toContain("bg-gray-200");
+    expect(button.className).toContain("bg-frost-glass");
   });
 
   it("type 属性が button である", () => {

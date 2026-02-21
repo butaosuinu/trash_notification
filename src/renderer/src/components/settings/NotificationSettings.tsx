@@ -14,7 +14,7 @@ type TimeInputProps = {
 function TimeInput({ label, value, onChange }: TimeInputProps) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-600">{label}</span>
+      <span className="text-sm text-frost-text-secondary">{label}</span>
       <input
         type="time"
         value={value}
@@ -45,7 +45,7 @@ function NotificationForm({ settings, onSave, saved }: NotificationFormProps) {
           }}
           className="rounded"
         />
-        <span className="text-sm text-gray-700">通知を有効にする</span>
+        <span className="text-sm text-frost-text">通知を有効にする</span>
       </label>
       <TimeInput
         label="週間通知時刻:"

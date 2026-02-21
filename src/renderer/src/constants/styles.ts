@@ -1,2 +1,2 @@
 export const INPUT_CLASS =
-  "rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none";
+  "rounded border border-frost-input-border bg-frost-input-bg px-2 py-1 text-sm text-frost-text placeholder:text-frost-text-muted focus:border-frost-accent focus:outline-none transition-all duration-150";

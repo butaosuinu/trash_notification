@@ -10,15 +10,17 @@ type SettingsProps = {
 
 export function Settings({ onBack }: SettingsProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-gray-100 p-4">
-      <div className="mb-4 flex items-center gap-3">
-        <Button variant="nav" onClick={onBack}>
-          戻る
-        </Button>
-        <h1 className="text-2xl font-bold text-gray-800">設定</h1>
+    <div className="flex h-screen flex-col p-4 pt-2">
+      <div className="titlebar-drag mb-4 flex items-center gap-3 pl-16 pt-1">
+        <div className="titlebar-no-drag">
+          <Button variant="nav" onClick={onBack}>
+            戻る
+          </Button>
+        </div>
+        <h1 className="font-heading text-2xl font-bold text-frost-text">設定</h1>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex-1 space-y-4 overflow-y-auto">
         <ApiKeyInput />
         <PdfImport />
         <ScheduleEditor />

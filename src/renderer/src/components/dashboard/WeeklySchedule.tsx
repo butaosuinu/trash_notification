@@ -48,9 +48,15 @@ type DayColumnProps = {
 
 function DayColumn({ dayName, index, entries, isToday }: DayColumnProps) {
   const dayColor =
-    index === SUNDAY_INDEX ? "text-red-500" : index === SATURDAY_INDEX ? "text-blue-500" : "";
+    index === SUNDAY_INDEX
+      ? "text-red-400"
+      : index === SATURDAY_INDEX
+        ? "text-frost-cyan"
+        : "text-frost-text-secondary";
   return (
-    <div className={`rounded p-2 ${isToday ? "bg-blue-100 font-bold" : "bg-gray-50"}`}>
+    <div
+      className={`rounded p-2 transition-colors duration-150 ${isToday ? "bg-frost-accent/15 font-bold border border-frost-accent/30" : "bg-frost-glass"}`}
+    >
       <div className={`mb-1 ${dayColor}`}>{dayName.charAt(0)}</div>
       {entries.length > 0 ? (
         <div className="space-y-1">
@@ -60,13 +66,13 @@ function DayColumn({ dayName, index, entries, isToday }: DayColumnProps) {
               <div key={entry.id}>
                 <div>{(TRASH_ICONS[entry.trash.icon] as string | undefined) ?? ""}</div>
                 <div className="leading-tight">{entry.trash.name}</div>
-                {badge !== null && <div className="text-[10px] text-gray-400">{badge}</div>}
+                {badge !== null && <div className="text-[10px] text-frost-text-muted">{badge}</div>}
               </div>
             );
           })}
         </div>
       ) : (
-        <div className="text-gray-300">-</div>
+        <div className="text-frost-text-muted">-</div>
       )}
     </div>
   );
@@ -80,7 +86,7 @@ export function WeeklySchedule({ schedule }: { schedule: TrashSchedule }) {
     <Card
       title="週間スケジュール"
       titleAs="h2"
-      titleClassName="mb-3 text-sm font-medium text-gray-500"
+      titleClassName="mb-3 text-sm font-medium text-frost-text-secondary"
     >
       <div className="grid grid-cols-7 gap-1 text-center text-xs">
         {DAY_NAMES.map((dayName, index) => (
@@ -94,11 +100,14 @@ export function WeeklySchedule({ schedule }: { schedule: TrashSchedule }) {
         ))}
       </div>
       {upcomingDates.length > 0 && (
-        <div className="mt-3 border-t pt-3">
-          <h3 className="mb-2 text-xs font-medium text-gray-400">今後の指定日</h3>
+        <div className="mt-3 border-t border-frost-glass-border pt-3">
+          <h3 className="mb-2 text-xs font-medium text-frost-text-muted">今後の指定日</h3>
           <div className="space-y-1 text-xs">
             {upcomingDates.map(({ entry, date }) => (
-              <div key={`${entry.id}-${date}`} className="flex items-center gap-2 text-gray-600">
+              <div
+                key={`${entry.id}-${date}`}
+                className="flex items-center gap-2 text-frost-text-secondary"
+              >
                 <span>{date}</span>
                 <span>{entry.trash.name}</span>
               </div>

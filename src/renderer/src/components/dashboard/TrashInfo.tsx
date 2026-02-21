@@ -14,12 +14,12 @@ export function TrashInfo({ entries }: TrashInfoProps) {
           {entries.map((entry) => (
             <div key={entry.id} className="flex items-center gap-3">
               <TrashIcon icon={entry.trash.icon} />
-              <span className="text-xl font-bold text-gray-800">{entry.trash.name}</span>
+              <span className="text-xl font-bold text-frost-text">{entry.trash.name}</span>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-gray-500">今日のゴミ回収はありません</p>
+        <p className="text-frost-text-secondary">今日のゴミ回収はありません</p>
       )}
     </Card>
   );

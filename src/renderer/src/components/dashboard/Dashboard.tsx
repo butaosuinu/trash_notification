@@ -14,15 +14,17 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
   const todayEntries = getTodayEntries(new Date(), schedule.entries);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-100 p-4">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">ゴミ通知</h1>
-        <Button variant="nav" onClick={onOpenSettings}>
-          設定
-        </Button>
+    <div className="flex h-screen flex-col p-4 pt-2">
+      <div className="titlebar-drag mb-4 flex items-center justify-between pl-16 pt-1">
+        <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
+        <div className="titlebar-no-drag">
+          <Button variant="nav" onClick={onOpenSettings}>
+            設定
+          </Button>
+        </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="flex-1 space-y-4 overflow-y-auto">
         <DateTimeDisplay />
         <TrashInfo entries={todayEntries} />
         <WeeklySchedule schedule={schedule} />
