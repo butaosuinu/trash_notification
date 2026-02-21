@@ -12,8 +12,8 @@ import { initLogger, createLogger } from "./services/logger";
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
-const WINDOW_WIDTH = 500;
-const WINDOW_HEIGHT = 400;
+const WINDOW_WIDTH = 800;
+const WINDOW_HEIGHT = 600;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -43,8 +43,12 @@ function createWindow(): void {
 }
 
 function createTray(): void {
+  const TRAY_ICON_SIZE = 16;
   const iconPath = join(__dirname, "../../resources/icon.png");
-  const icon = nativeImage.createFromPath(iconPath);
+  const icon = nativeImage.createFromPath(iconPath).resize({
+    width: TRAY_ICON_SIZE,
+    height: TRAY_ICON_SIZE,
+  });
   tray = new Tray(icon);
 
   const contextMenu = Menu.buildFromTemplate([

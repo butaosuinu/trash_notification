@@ -17,3 +17,11 @@ export function getTodayDayOfWeek(date: Date): number {
 export function formatDateToISO(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
+
+export function formatShortDate(date: Date): string {
+  return format(date, "M月d日（EEEE）", { locale: ja });
+}
+
+export function formatWeekListDate(date: Date): string {
+  return format(date, "M/d（E）", { locale: ja });
+}
