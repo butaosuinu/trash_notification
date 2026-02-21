@@ -1,8 +1,8 @@
-import pkg from "electron-updater";
+import electronUpdaterModule from "electron-updater";
 import type { BrowserWindow } from "electron";
 import { app } from "electron";
 
-const { autoUpdater } = pkg;
+const { autoUpdater } = electronUpdaterModule;
 
 type UpdateStatus =
   | "idle"
