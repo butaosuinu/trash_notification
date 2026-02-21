@@ -6,6 +6,7 @@ import { registerUpdaterHandlers } from "./ipc/updaterHandlers";
 import { registerNotificationHandlers } from "./ipc/notificationHandlers";
 import { initUpdater } from "./services/updaterService";
 import { initNotification } from "./services/notificationService";
+import { migrateStoreIfNeeded } from "./services/scheduleStore";
 import { initLogger, createLogger } from "./services/logger";
 
 let mainWindow: BrowserWindow | null = null;
@@ -70,6 +71,7 @@ function createTray(): void {
 
 void app.whenReady().then(() => {
   initLogger();
+  migrateStoreIfNeeded(app.getVersion());
   const log = createLogger("main");
 
   registerScheduleHandlers();

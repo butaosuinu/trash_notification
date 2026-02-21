@@ -12,6 +12,7 @@ const log = createLogger("scheduleStore");
 type StoreSchema = {
   schedule: TrashSchedule | TrashScheduleV1;
   apiKey: string | null;
+  migratedVersion: string | null;
 };
 
 const TUESDAY = 2;
@@ -97,24 +98,34 @@ const store = new Store<StoreSchema>({
   defaults: {
     schedule: DEFAULT_SCHEDULE,
     apiKey: null,
+    migratedVersion: null,
   },
 });
 
-export function loadSchedule(): TrashSchedule {
+export function migrateStoreIfNeeded(appVersion: string): void {
+  if (store.get("migratedVersion") === appVersion) return;
+
   const data = store.get("schedule");
-  if (isV2Schedule(data)) {
-    const migrated = migrateNthWeekdayRules(data);
-    if (migrated !== data) {
-      log.info("Migrating nthWeekday rules to patterns format");
-      store.set("schedule", migrated);
-    }
-    return migrated;
+  const v2 = isV2Schedule(data) ? data : migrateV1ToV2(data);
+  const migrated = migrateNthWeekdayRules(v2);
+
+  if (!isV2Schedule(data)) {
+    log.info("Migrating schedule from V1 to V2");
+  }
+  if (migrated !== v2) {
+    log.info("Migrating nthWeekday rules to patterns format");
+  }
+  if (v2 !== data || migrated !== v2) {
+    store.set("schedule", migrated);
   }
 
-  log.info("Migrating schedule from V1 to V2");
-  const migrated = migrateV1ToV2(data);
-  store.set("schedule", migrated);
-  return migrated;
+  store.set("migratedVersion", appVersion);
+  log.info(`Store migrated for version ${appVersion}`);
+}
+
+export function loadSchedule(): TrashSchedule {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- migrateStoreIfNeeded guarantees V2
+  return store.get("schedule") as TrashSchedule;
 }
 
 export function saveSchedule(schedule: TrashSchedule): void {
