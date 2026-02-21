@@ -74,7 +74,7 @@ describe("WeeklySchedule", () => {
     expect(screen.getByText("第1・第3")).toBeInTheDocument();
   });
 
-  it("複数パターンのnthWeekdayが複数曜日に表示される", () => {
+  it("複数パターンのnthWeekdayが曜日ごとに分離して表示される", () => {
     const schedule: TrashSchedule = {
       version: 2,
       entries: [
@@ -93,7 +93,8 @@ describe("WeeklySchedule", () => {
     };
     render(<WeeklySchedule schedule={schedule} />);
     expect(screen.getAllByText("資源ゴミ")).toHaveLength(2);
-    expect(screen.getAllByText("第2水・第4火")).toHaveLength(2);
+    expect(screen.getByText("第4")).toBeInTheDocument();
+    expect(screen.getByText("第2")).toBeInTheDocument();
   });
 
   it("指定日のスケジュールが今後の指定日セクションに表示される", () => {

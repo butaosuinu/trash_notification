@@ -66,7 +66,7 @@ describe("WeeklyTrashList", () => {
     expect(emptyLabels.length).toBe(7);
   });
 
-  it("複数曜日のnthWeekdayバッジに曜日名が含まれる", () => {
+  it("複数曜日のnthWeekdayバッジが曜日ごとに分離して表示される", () => {
     // 2026-02-17は第3火曜、2026-02-18は第3水曜
     const schedule: TrashSchedule = {
       version: 2,
@@ -85,7 +85,7 @@ describe("WeeklyTrashList", () => {
       ],
     };
     render(<WeeklyTrashList schedule={schedule} />);
-    expect(screen.getAllByText("第3水・第3火")).toHaveLength(2);
+    expect(screen.getAllByText("第3")).toHaveLength(2);
   });
 
   it("同一曜日のnthWeekdayバッジに曜日名が含まれない", () => {

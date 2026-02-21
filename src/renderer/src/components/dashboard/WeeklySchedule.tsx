@@ -1,11 +1,6 @@
 import { getDay } from "date-fns";
 import type { TrashSchedule, ScheduleEntry, SpecificDatesRule } from "../../types/schedule";
-import {
-  DAY_NAMES,
-  SHORT_DAY_NAMES,
-  TRASH_ICONS,
-  RULE_TYPE_LABELS,
-} from "../../constants/schedule";
+import { DAY_NAMES, TRASH_ICONS, RULE_TYPE_LABELS } from "../../constants/schedule";
 import { formatDateToISO } from "../../utils/dateUtils";
 import { Card } from "../common/Card";
 
@@ -23,17 +18,15 @@ function getEntriesForDayOfWeek(entries: ScheduleEntry[], dayOfWeek: number): Sc
   });
 }
 
-function getRuleBadge(entry: ScheduleEntry): string | null {
+function getRuleBadge(entry: ScheduleEntry, dayOfWeek: number): string | null {
   if (entry.rule.type === "biweekly") return RULE_TYPE_LABELS.biweekly;
   if (entry.rule.type === "nthWeekday") {
-    const { patterns } = entry.rule;
-    const isAllSameDay = patterns.every((p) => p.dayOfWeek === patterns[0].dayOfWeek);
-    if (isAllSameDay) {
-      return patterns.flatMap((p) => p.weekNumbers.map((n) => `第${String(n)}`)).join("・");
-    }
-    return patterns
-      .flatMap((p) => p.weekNumbers.map((n) => `第${String(n)}${SHORT_DAY_NAMES[p.dayOfWeek]}`))
-      .join("・");
+    const weekNumbers = entry.rule.patterns
+      .filter((p) => p.dayOfWeek === dayOfWeek)
+      .flatMap((p) => p.weekNumbers)
+      .toSorted((a, b) => a - b);
+    if (weekNumbers.length === 0) return null;
+    return weekNumbers.map((n) => `第${String(n)}`).join("・");
   }
   return null;
 }
@@ -76,7 +69,7 @@ function DayColumn({ dayName, index, entries, isToday }: DayColumnProps) {
       {entries.length > 0 ? (
         <div className="space-y-1">
           {entries.map((entry) => {
-            const badge = getRuleBadge(entry);
+            const badge = getRuleBadge(entry, index);
             return (
               <div key={entry.id}>
                 <div>{(TRASH_ICONS[entry.trash.icon] as string | undefined) ?? ""}</div>

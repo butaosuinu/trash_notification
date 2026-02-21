@@ -83,7 +83,7 @@ function WeekDayRow({ day, index, isLast }: WeekDayRowProps) {
                   {(TRASH_ICONS[entry.trash.icon] as string | undefined) ?? ""}
                 </span>
                 <span className="text-sm text-frost-text">{entry.trash.name}</span>
-                <RuleBadge rule={entry.rule} />
+                <RuleBadge rule={entry.rule} dayOfWeek={day.dayIndex} />
               </div>
             ))}
           </div>
