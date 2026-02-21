@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { INPUT_CLASS } from "../../constants/styles";
 
 type DateListEditorProps = { dates: string[]; onChange: (dates: string[]) => void };
 
@@ -20,7 +21,7 @@ export function DateListEditor({ dates, onChange }: DateListEditorProps) {
           onChange={(e) => {
             setNewDate(e.target.value);
           }}
-          className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+          className={INPUT_CLASS}
         />
         <button
           type="button"

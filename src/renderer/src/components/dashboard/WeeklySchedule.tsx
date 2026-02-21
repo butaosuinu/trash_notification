@@ -2,6 +2,7 @@ import { getDay } from "date-fns";
 import type { TrashSchedule, ScheduleEntry, SpecificDatesRule } from "../../types/schedule";
 import { DAY_NAMES, TRASH_ICONS, RULE_TYPE_LABELS } from "../../constants/schedule";
 import { formatDateToISO } from "../../utils/dateUtils";
+import { Card } from "../common/Card";
 
 const SUNDAY_INDEX = 0;
 const SATURDAY_INDEX = 6;
@@ -76,8 +77,11 @@ export function WeeklySchedule({ schedule }: { schedule: TrashSchedule }) {
   const upcomingDates = getUpcomingSpecificDates(schedule.entries);
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
-      <h2 className="mb-3 text-sm font-medium text-gray-500">週間スケジュール</h2>
+    <Card
+      title="週間スケジュール"
+      titleAs="h2"
+      titleClassName="mb-3 text-sm font-medium text-gray-500"
+    >
       <div className="grid grid-cols-7 gap-1 text-center text-xs">
         {DAY_NAMES.map((dayName, index) => (
           <DayColumn
@@ -102,6 +106,6 @@ export function WeeklySchedule({ schedule }: { schedule: TrashSchedule }) {
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

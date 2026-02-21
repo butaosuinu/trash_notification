@@ -1,6 +1,8 @@
-import { useState } from "react";
 import { useNotificationSettings } from "../../hooks/useNotificationSettings";
-import { SAVE_FEEDBACK_DELAY_MS } from "../../constants/schedule";
+import { useSaveFeedback } from "../../hooks/useSaveFeedback";
+import { INPUT_CLASS } from "../../constants/styles";
+import { Button } from "../common/Button";
+import { Card } from "../common/Card";
 import type { NotificationSettings as NotificationSettingsType } from "../../../../shared/types/notification";
 
 type TimeInputProps = {
@@ -19,7 +21,7 @@ function TimeInput({ label, value, onChange }: TimeInputProps) {
         onChange={(e) => {
           onChange(e.target.value);
         }}
-        className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+        className={INPUT_CLASS}
       />
     </div>
   );
@@ -59,36 +61,30 @@ function NotificationForm({ settings, onSave, saved }: NotificationFormProps) {
           onSave({ ...settings, dayBeforeNotificationTime: v });
         }}
       />
-      <button
-        type="button"
+      <Button
         onClick={() => {
           onSave(settings);
         }}
-        className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
       >
         {saved ? "保存済み" : "保存"}
-      </button>
+      </Button>
     </div>
   );
 }
 
 export function NotificationSettings() {
   const { settings, saveSettings } = useNotificationSettings();
-  const [saved, setSaved] = useState(false);
+  const { saved, showSavedFeedback } = useSaveFeedback();
 
   const handleSave = (newSettings: NotificationSettingsType) => {
     void saveSettings(newSettings).then(() => {
-      setSaved(true);
-      setTimeout(() => {
-        setSaved(false);
-      }, SAVE_FEEDBACK_DELAY_MS);
+      showSavedFeedback();
     });
   };
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
-      <h3 className="mb-2 text-sm font-medium text-gray-500">通知設定</h3>
+    <Card title="通知設定">
       <NotificationForm settings={settings} onSave={handleSave} saved={saved} />
-    </div>
+    </Card>
   );
 }

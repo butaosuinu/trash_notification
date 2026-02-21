@@ -1,10 +1,9 @@
 import type { ScheduleRule, BiweeklyRule, NthWeekdayRule } from "../../types/schedule";
 import { DAY_NAMES, RULE_TYPE_LABELS, WEEK_NUMBER_LABELS } from "../../constants/schedule";
 import { DateListEditor } from "./DateListEditor";
+import { INPUT_CLASS } from "../../constants/styles";
 
 const RULE_TYPES = ["weekly", "biweekly", "nthWeekday", "specificDates"] as const;
-const INPUT_CLASS =
-  "rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none";
 
 function createDefaultRule(ruleType: string): ScheduleRule {
   switch (ruleType) {

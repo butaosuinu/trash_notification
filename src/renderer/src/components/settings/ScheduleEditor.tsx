@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSchedule } from "../../hooks/useSchedule";
-import { TRASH_ICONS, TRASH_ICON_LABELS, SAVE_FEEDBACK_DELAY_MS } from "../../constants/schedule";
+import { useSaveFeedback } from "../../hooks/useSaveFeedback";
+import { TRASH_ICONS, TRASH_ICON_LABELS } from "../../constants/schedule";
 import type { ScheduleEntry, ScheduleRule } from "../../types/schedule";
 import { SCHEDULE_VERSION } from "../../types/schedule";
 import { RuleEditor } from "./RuleEditor";
+import { INPUT_CLASS } from "../../constants/styles";
+import { Button } from "../common/Button";
+import { Card } from "../common/Card";
 const ICON_OPTIONS = ["", ...Object.keys(TRASH_ICONS)];
 
 function createEmptyEntry(): ScheduleEntry {
@@ -31,20 +35,10 @@ type ScheduleActionsProps = {
 function ScheduleActions({ onAdd, onSave, saved }: ScheduleActionsProps) {
   return (
     <div className="mt-3 flex gap-2">
-      <button
-        type="button"
-        onClick={onAdd}
-        className="rounded bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
-      >
+      <Button variant="secondary" onClick={onAdd}>
         エントリーを追加
-      </button>
-      <button
-        type="button"
-        onClick={onSave}
-        className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
-      >
-        {saved ? "保存済み" : "保存"}
-      </button>
+      </Button>
+      <Button onClick={onSave}>{saved ? "保存済み" : "保存"}</Button>
     </div>
   );
 }
@@ -91,14 +85,14 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
             onNameChange(e.target.value);
           }}
           placeholder="ゴミの種類"
-          className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+          className={`flex-1 ${INPUT_CLASS}`}
         />
         <select
           value={entry.trash.icon}
           onChange={(e) => {
             onIconChange(e.target.value);
           }}
-          className="rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+          className={INPUT_CLASS}
         >
           {ICON_OPTIONS.map((iconKey) => (
             <option key={iconKey} value={iconKey}>
@@ -106,13 +100,9 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
             </option>
           ))}
         </select>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="rounded px-2 py-1 text-sm text-red-400 hover:bg-red-50 hover:text-red-600"
-        >
+        <Button variant="danger-ghost" onClick={onRemove}>
           削除
-        </button>
+        </Button>
       </div>
       <RuleEditor rule={entry.rule} onChange={onRuleChange} />
     </div>
@@ -122,7 +112,7 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
 export function ScheduleEditor() {
   const { schedule, saveSchedule } = useSchedule();
   const [entries, setEntries] = useState<ScheduleEntry[]>([]);
-  const [saved, setSaved] = useState(false);
+  const { saved, showSavedFeedback } = useSaveFeedback();
 
   useEffect(() => {
     setEntries(schedule.entries);
@@ -134,15 +124,11 @@ export function ScheduleEditor() {
 
   const handleSave = async () => {
     await saveSchedule({ version: SCHEDULE_VERSION, entries });
-    setSaved(true);
-    setTimeout(() => {
-      setSaved(false);
-    }, SAVE_FEEDBACK_DELAY_MS);
+    showSavedFeedback();
   };
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow">
-      <h3 className="mb-2 text-sm font-medium text-gray-500">スケジュール編集</h3>
+    <Card title="スケジュール編集">
       <ScheduleEntryList
         entries={entries}
         onUpdate={updateEntry}
@@ -159,6 +145,6 @@ export function ScheduleEditor() {
         }}
         saved={saved}
       />
-    </div>
+    </Card>
   );
 }

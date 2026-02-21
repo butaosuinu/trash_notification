@@ -1,5 +1,6 @@
 import { useSchedule } from "../../hooks/useSchedule";
 import { getTodayEntries } from "../../utils/scheduleMatch";
+import { Button } from "../common/Button";
 import { DateTimeDisplay } from "./DateTimeDisplay";
 import { TrashInfo } from "./TrashInfo";
 import { WeeklySchedule } from "./WeeklySchedule";
@@ -16,13 +17,9 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
     <div className="flex min-h-screen flex-col bg-gray-100 p-4">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800">ゴミ通知</h1>
-        <button
-          type="button"
-          onClick={onOpenSettings}
-          className="rounded-lg bg-gray-200 px-3 py-1 text-sm text-gray-600 hover:bg-gray-300"
-        >
+        <Button variant="nav" onClick={onOpenSettings}>
           設定
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-4">
