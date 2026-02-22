@@ -41,6 +41,10 @@ function countTooltipsByLabel(label: string): number {
   return screen.getAllByRole("tooltip").filter((el) => el.textContent === label).length;
 }
 
+function countCellLabelsByName(name: string): number {
+  return screen.getAllByText(name).filter((el) => el.closest("[role='tooltip']") === null).length;
+}
+
 function expectDayHeadersVisible() {
   const dayNames = ["日", "月", "火", "水", "木", "金", "土"];
   dayNames.forEach((name) => {
@@ -114,6 +118,24 @@ describe("MonthlyCalendar", () => {
 
       const NTH_FRIDAYS_IN_GRID = 3;
       expect(countTooltipsByLabel("プラスチック")).toBe(NTH_FRIDAYS_IN_GRID);
+    });
+
+    it("weeklyルールのゴミ名がセルにテキスト表示される", async () => {
+      renderCalendar();
+
+      await screen.findAllByText("燃えるゴミ");
+
+      const TUESDAYS_IN_GRID = 6;
+      expect(countCellLabelsByName("燃えるゴミ")).toBe(TUESDAYS_IN_GRID);
+    });
+
+    it("nthWeekdayルールのゴミ名がセルにテキスト表示される", async () => {
+      renderCalendar();
+
+      await screen.findAllByText("プラスチック");
+
+      const NTH_FRIDAYS_IN_GRID = 3;
+      expect(countCellLabelsByName("プラスチック")).toBe(NTH_FRIDAYS_IN_GRID);
     });
 
     it("スケジュールが空の場合はゴミのツールチップが表示されない", async () => {
