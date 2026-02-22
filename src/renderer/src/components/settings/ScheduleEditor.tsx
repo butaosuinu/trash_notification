@@ -1,9 +1,9 @@
-import { PlusCircle, Save, Check, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { PlusCircle, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { ICON_SIZE, INPUT_CLASS } from "../../constants/styles";
+import { AUTOSAVE_DELAY_MS, TRASH_ICONS, TRASH_ICON_LABELS } from "../../constants/schedule";
 import { useSchedule } from "../../hooks/useSchedule";
 import { useSaveFeedback } from "../../hooks/useSaveFeedback";
-import { TRASH_ICONS, TRASH_ICON_LABELS } from "../../constants/schedule";
 import type { ScheduleEntry, ScheduleRule } from "../../types/schedule";
 import { SCHEDULE_VERSION } from "../../types/schedule";
 import { RuleEditor } from "./RuleEditor";
@@ -27,13 +27,7 @@ type EntryRowProps = {
   onRemove: () => void;
 };
 
-type ScheduleActionsProps = {
-  onAdd: () => void;
-  onSave: () => void;
-  saved: boolean;
-};
-
-function ScheduleActions({ onAdd, onSave, saved }: ScheduleActionsProps) {
+function ScheduleActions({ onAdd }: { readonly onAdd: () => void }) {
   return (
     <div className="mt-3 flex gap-2">
       <IconButton
@@ -41,11 +35,6 @@ function ScheduleActions({ onAdd, onSave, saved }: ScheduleActionsProps) {
         onClick={onAdd}
         icon={<PlusCircle size={ICON_SIZE} />}
         label="エントリーを追加"
-      />
-      <IconButton
-        onClick={onSave}
-        icon={saved ? <Check size={ICON_SIZE} /> : <Save size={ICON_SIZE} />}
-        label={saved ? "保存済み" : "保存"}
       />
     </div>
   );
@@ -120,22 +109,54 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
   );
 }
 
-export function ScheduleEditor() {
+function useAutosaveEntries() {
   const { schedule, saveSchedule } = useSchedule();
   const [entries, setEntries] = useState<ScheduleEntry[]>([]);
-  const { saved, showSavedFeedback } = useSaveFeedback();
+  const [lastSavedEntries, setLastSavedEntries] = useState<ScheduleEntry[]>([]);
+  const { showSavedFeedback } = useSaveFeedback();
+  const isSelfSaveRef = useRef(false);
 
   useEffect(() => {
+    if (isSelfSaveRef.current) {
+      // eslint-disable-next-line functional/immutable-data -- reset ref after self-initiated save
+      isSelfSaveRef.current = false;
+      return;
+    }
+    setLastSavedEntries(schedule.entries);
     setEntries(schedule.entries);
   }, [schedule]);
 
+  useEffect(() => {
+    if (entries === lastSavedEntries) return;
+
+    const timer = setTimeout(() => {
+      // eslint-disable-next-line functional/immutable-data -- mark self-save to skip sync overwrite
+      isSelfSaveRef.current = true;
+      void saveSchedule({ version: SCHEDULE_VERSION, entries }).then(
+        () => {
+          setLastSavedEntries(entries);
+          showSavedFeedback();
+        },
+        () => {
+          // eslint-disable-next-line functional/immutable-data -- reset flag on save failure
+          isSelfSaveRef.current = false;
+        },
+      );
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [entries, lastSavedEntries, saveSchedule, showSavedFeedback]);
+
+  return [entries, setEntries] as const;
+}
+
+export function ScheduleEditor() {
+  const [entries, setEntries] = useAutosaveEntries();
+
   const updateEntry = (id: string, updater: (e: ScheduleEntry) => ScheduleEntry) => {
     setEntries((prev) => prev.map((e) => (e.id === id ? updater(e) : e)));
-  };
-
-  const handleSave = async () => {
-    await saveSchedule({ version: SCHEDULE_VERSION, entries });
-    showSavedFeedback();
   };
 
   return (
@@ -151,10 +172,6 @@ export function ScheduleEditor() {
         onAdd={() => {
           setEntries((prev) => [...prev, createEmptyEntry()]);
         }}
-        onSave={() => {
-          void handleSave();
-        }}
-        saved={saved}
       />
     </Card>
   );

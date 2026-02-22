@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "jotai";
 import { ScheduleEditor } from "../ScheduleEditor";
+import { AUTOSAVE_DELAY_MS } from "../../../constants/schedule";
 import type { TrashSchedule } from "../../../types/schedule";
 
 const mockSchedule: TrashSchedule = {
@@ -84,19 +85,51 @@ describe("ScheduleEditor", () => {
     expect(screen.getByDisplayValue("プラスチック")).toBeInTheDocument();
   });
 
-  it("保存ボタンでsaveScheduleが呼ばれ保存済みフィードバックが表示される", async () => {
+  it("エントリー変更後にデバウンスで自動保存される", async () => {
     vi.mocked(window.electronAPI.saveSchedule).mockResolvedValue(undefined);
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     renderScheduleEditor();
 
     await screen.findByDisplayValue("燃えるゴミ");
 
-    await user.click(screen.getByRole("button", { name: "保存" }));
+    const input = screen.getByDisplayValue("燃えるゴミ");
+    await user.clear(input);
+    await user.type(input, "プラ");
+
+    vi.advanceTimersByTime(AUTOSAVE_DELAY_MS);
 
     await waitFor(() => {
       expect(window.electronAPI.saveSchedule).toHaveBeenCalled();
     });
+  });
 
-    await screen.findByRole("button", { name: "保存済み" });
+  it("自動保存のIPC完了後にユーザーの入力が失われない", async () => {
+    const SAVE_DELAY = 100;
+    vi.mocked(window.electronAPI.saveSchedule).mockImplementation(async () => {
+      // eslint-disable-next-line promise/avoid-new -- delayed mock required for race condition test
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, SAVE_DELAY);
+      });
+    });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderScheduleEditor();
+
+    await screen.findByDisplayValue("燃えるゴミ");
+
+    const input = screen.getByDisplayValue("燃えるゴミ");
+    await user.clear(input);
+    await user.type(input, "A");
+
+    vi.advanceTimersByTime(AUTOSAVE_DELAY_MS);
+
+    await user.type(input, "B");
+    expect(screen.getByDisplayValue("AB")).toBeInTheDocument();
+
+    vi.advanceTimersByTime(SAVE_DELAY);
+    await waitFor(() => {
+      expect(window.electronAPI.saveSchedule).toHaveBeenCalled();
+    });
+
+    expect(screen.getByDisplayValue("AB")).toBeInTheDocument();
   });
 });
