@@ -1,5 +1,5 @@
 import { PlusCircle, Trash2 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ICON_SIZE, INPUT_CLASS } from "../../constants/styles";
 import { AUTOSAVE_DELAY_MS, TRASH_ICONS, TRASH_ICON_LABELS } from "../../constants/schedule";
 import { useSchedule } from "../../hooks/useSchedule";
@@ -112,22 +112,20 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
 export function ScheduleEditor() {
   const { schedule, saveSchedule } = useSchedule();
   const [entries, setEntries] = useState<ScheduleEntry[]>([]);
-  const lastSavedEntries = useRef<ScheduleEntry[]>([]);
+  const [lastSavedEntries, setLastSavedEntries] = useState<ScheduleEntry[]>([]);
   const { showSavedFeedback } = useSaveFeedback();
 
   useEffect(() => {
-    // eslint-disable-next-line functional/immutable-data -- ref state requires mutation
-    lastSavedEntries.current = schedule.entries;
+    setLastSavedEntries(schedule.entries);
     setEntries(schedule.entries);
   }, [schedule]);
 
   useEffect(() => {
-    if (entries === lastSavedEntries.current) return;
+    if (entries === lastSavedEntries) return;
 
     const timer = setTimeout(() => {
       void saveSchedule({ version: SCHEDULE_VERSION, entries }).then(() => {
-        // eslint-disable-next-line functional/immutable-data -- ref state requires mutation
-        lastSavedEntries.current = entries;
+        setLastSavedEntries(entries);
         showSavedFeedback();
       });
     }, AUTOSAVE_DELAY_MS);
@@ -135,7 +133,7 @@ export function ScheduleEditor() {
     return () => {
       clearTimeout(timer);
     };
-  }, [entries, saveSchedule, showSavedFeedback]);
+  }, [entries, lastSavedEntries, saveSchedule, showSavedFeedback]);
 
   const updateEntry = (id: string, updater: (e: ScheduleEntry) => ScheduleEntry) => {
     setEntries((prev) => prev.map((e) => (e.id === id ? updater(e) : e)));

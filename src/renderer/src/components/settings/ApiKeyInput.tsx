@@ -1,29 +1,27 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { AUTOSAVE_DELAY_MS } from "../../constants/schedule";
 import { useSaveFeedback } from "../../hooks/useSaveFeedback";
 import { Card } from "../common/Card";
 
 export function ApiKeyInput() {
   const [apiKey, setApiKey] = useState("");
-  const lastSavedKey = useRef<string>("");
+  const [lastSavedKey, setLastSavedKey] = useState<string>("");
   const { showSavedFeedback } = useSaveFeedback();
 
   useEffect(() => {
     void window.electronAPI.getApiKey().then((key) => {
       const resolved = key ?? "";
-      // eslint-disable-next-line functional/immutable-data -- ref state requires mutation
-      lastSavedKey.current = resolved;
+      setLastSavedKey(resolved);
       setApiKey(resolved);
     });
   }, []);
 
   useEffect(() => {
-    if (apiKey === lastSavedKey.current) return;
+    if (apiKey === lastSavedKey) return;
 
     const timer = setTimeout(() => {
       void window.electronAPI.setApiKey(apiKey).then(() => {
-        // eslint-disable-next-line functional/immutable-data -- ref state requires mutation
-        lastSavedKey.current = apiKey;
+        setLastSavedKey(apiKey);
         showSavedFeedback();
       });
     }, AUTOSAVE_DELAY_MS);
@@ -31,7 +29,7 @@ export function ApiKeyInput() {
     return () => {
       clearTimeout(timer);
     };
-  }, [apiKey, showSavedFeedback]);
+  }, [apiKey, lastSavedKey, showSavedFeedback]);
 
   return (
     <Card title="Gemini API キー">
