@@ -11,7 +11,7 @@ export function Toast() {
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center">
+    <div className="pointer-events-none fixed right-4 top-4 z-50">
       <div className="pointer-events-auto animate-toast-in glass rounded-lg border-frost-success/30 px-4 py-2 text-sm text-emerald-400 shadow-lg">
         <div className="flex items-center gap-2">
           <Check size={ICON_SIZE} />
