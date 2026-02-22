@@ -26,6 +26,7 @@ export const WEEK_NUMBER_LABELS = ["第1", "第2", "第3", "第4", "第5"] as co
 
 export const CLOCK_INTERVAL_MS = 1000;
 export const SAVE_FEEDBACK_DELAY_MS = 2000;
+export const AUTOSAVE_DELAY_MS = 500;
 
 export const SATURDAY_INDEX = 6;
 export const STAGGER_MS = 50;

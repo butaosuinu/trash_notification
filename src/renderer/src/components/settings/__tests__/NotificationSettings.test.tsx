@@ -35,18 +35,6 @@ describe("NotificationSettings", () => {
     expect(screen.getByText("前日通知時刻:")).toBeInTheDocument();
   });
 
-  it("保存ボタンが表示される", async () => {
-    render(
-      <Provider>
-        <NotificationSettings />
-      </Provider>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "保存" })).toBeInTheDocument();
-    });
-  });
-
   it("チェックボックスの変更でsaveNotificationSettingsが呼ばれる", async () => {
     const user = userEvent.setup();
     render(

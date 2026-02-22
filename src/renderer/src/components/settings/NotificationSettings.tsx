@@ -1,8 +1,6 @@
-import { Save, Check } from "lucide-react";
-import { ICON_SIZE, INPUT_CLASS } from "../../constants/styles";
+import { INPUT_CLASS } from "../../constants/styles";
 import { useNotificationSettings } from "../../hooks/useNotificationSettings";
 import { useSaveFeedback } from "../../hooks/useSaveFeedback";
-import { IconButton } from "../common/IconButton";
 import { Card } from "../common/Card";
 import type { NotificationSettings as NotificationSettingsType } from "../../../../shared/types/notification";
 
@@ -31,10 +29,9 @@ function TimeInput({ label, value, onChange }: TimeInputProps) {
 type NotificationFormProps = {
   settings: NotificationSettingsType;
   onSave: (settings: NotificationSettingsType) => void;
-  saved: boolean;
 };
 
-function NotificationForm({ settings, onSave, saved }: NotificationFormProps) {
+function NotificationForm({ settings, onSave }: NotificationFormProps) {
   return (
     <div className="space-y-3">
       <label className="flex items-center gap-2">
@@ -62,20 +59,13 @@ function NotificationForm({ settings, onSave, saved }: NotificationFormProps) {
           onSave({ ...settings, dayBeforeNotificationTime: v });
         }}
       />
-      <IconButton
-        onClick={() => {
-          onSave(settings);
-        }}
-        icon={saved ? <Check size={ICON_SIZE} /> : <Save size={ICON_SIZE} />}
-        label={saved ? "保存済み" : "保存"}
-      />
     </div>
   );
 }
 
 export function NotificationSettings() {
   const { settings, saveSettings } = useNotificationSettings();
-  const { saved, showSavedFeedback } = useSaveFeedback();
+  const { showSavedFeedback } = useSaveFeedback();
 
   const handleSave = (newSettings: NotificationSettingsType) => {
     void saveSettings(newSettings).then(() => {
@@ -85,7 +75,7 @@ export function NotificationSettings() {
 
   return (
     <Card title="通知設定">
-      <NotificationForm settings={settings} onSave={handleSave} saved={saved} />
+      <NotificationForm settings={settings} onSave={handleSave} />
     </Card>
   );
 }
