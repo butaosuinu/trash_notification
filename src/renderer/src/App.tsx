@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Provider } from "jotai";
 import { MonthlyCalendar } from "./components/calendar/MonthlyCalendar";
+import { Toast } from "./components/common/Toast";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { Settings } from "./components/settings/Settings";
 import { UpdateBanner } from "./components/UpdateBanner";
@@ -16,6 +17,7 @@ export function App() {
 
   return (
     <Provider>
+      <Toast />
       <UpdateBanner />
       {view === "dashboard" ? (
         <Dashboard
