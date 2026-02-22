@@ -33,3 +33,7 @@ export function formatTitlebarDate(date: Date): string {
 export function formatColumnDate(date: Date): string {
   return format(date, "M/d");
 }
+
+export function formatMonthYear(date: Date): string {
+  return format(date, "yyyy年M月", { locale: ja });
+}
