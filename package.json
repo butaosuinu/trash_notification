@@ -1,6 +1,6 @@
 {
   "name": "trash-notification",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ゴミ出しに役立つ、ダメ人間のダメ人間によるダメ人間のためのアプリ",
   "main": "./out/main/index.js",
   "type": "module",
