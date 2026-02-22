@@ -1,12 +1,13 @@
 import { useCallback, useState } from "react";
 import { addMonths, startOfMonth, subMonths } from "date-fns";
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ICON_SIZE } from "../../constants/styles";
 import { useDateTime } from "../../hooks/useDateTime";
 import { useSchedule } from "../../hooks/useSchedule";
 import { formatMonthYear } from "../../utils/dateUtils";
 import { Card } from "../common/Card";
 import { IconButton } from "../common/IconButton";
+import { PageHeader } from "../common/PageHeader";
 import { CalendarGrid } from "./CalendarGrid";
 
 type MonthlyCalendarProps = {
@@ -64,22 +65,17 @@ export function MonthlyCalendar({ onBack }: MonthlyCalendarProps) {
 
   return (
     <div className="flex h-screen flex-col">
-      <div className="glass-titlebar titlebar-drag sticky top-0 z-10 flex items-center gap-3 pb-3 pl-20 pr-4 pt-3">
-        <div className="titlebar-no-drag">
-          <IconButton
-            variant="nav"
-            onClick={onBack}
-            icon={<ArrowLeft size={ICON_SIZE} />}
-            label="戻る"
+      <PageHeader
+        title="カレンダー"
+        onBack={onBack}
+        trailing={
+          <MonthNavigation
+            onPrev={handlePrevMonth}
+            onNext={handleNextMonth}
+            onToday={handleGoToToday}
           />
-        </div>
-        <h1 className="font-heading text-2xl font-bold text-frost-text">カレンダー</h1>
-        <MonthNavigation
-          onPrev={handlePrevMonth}
-          onNext={handleNextMonth}
-          onToday={handleGoToToday}
-        />
-      </div>
+        }
+      />
 
       <div className="flex-1 overflow-y-auto p-4">
         <Card

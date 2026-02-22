@@ -2,6 +2,7 @@ import { addDays } from "date-fns";
 import { CalendarDays, Settings } from "lucide-react";
 import { ICON_SIZE } from "../../constants/styles";
 import { useDateTime } from "../../hooks/useDateTime";
+import { PageHeader } from "../common/PageHeader";
 import { useSchedule } from "../../hooks/useSchedule";
 import { formatTitlebarDate } from "../../utils/dateUtils";
 import { getTodayEntries } from "../../utils/scheduleMatch";
@@ -25,26 +26,28 @@ export function Dashboard({ onOpenCalendar, onOpenSettings }: DashboardProps) {
 
   return (
     <div className="flex h-screen flex-col">
-      <div className="glass-titlebar titlebar-drag sticky top-0 z-10 flex items-center justify-between pb-3 pl-16 pr-4 pt-3">
-        <div className="flex items-baseline gap-2">
-          <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
+      <PageHeader
+        title="ゴミ通知"
+        subtitle={
           <span className="text-xs text-frost-text-secondary">{formatTitlebarDate(now)}</span>
-        </div>
-        <div className="titlebar-no-drag flex items-center gap-2">
-          <IconButton
-            variant="nav"
-            onClick={onOpenCalendar}
-            icon={<CalendarDays size={ICON_SIZE} />}
-            label="カレンダー"
-          />
-          <IconButton
-            variant="nav"
-            onClick={onOpenSettings}
-            icon={<Settings size={ICON_SIZE} />}
-            label="設定"
-          />
-        </div>
-      </div>
+        }
+        trailing={
+          <div className="titlebar-no-drag flex items-center gap-2">
+            <IconButton
+              variant="nav"
+              onClick={onOpenCalendar}
+              icon={<CalendarDays size={ICON_SIZE} />}
+              label="カレンダー"
+            />
+            <IconButton
+              variant="nav"
+              onClick={onOpenSettings}
+              icon={<Settings size={ICON_SIZE} />}
+              label="設定"
+            />
+          </div>
+        }
+      />
 
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         <TodayTomorrowCard
