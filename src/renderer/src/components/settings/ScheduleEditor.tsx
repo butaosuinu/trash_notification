@@ -1,5 +1,5 @@
 import { PlusCircle, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ICON_SIZE, INPUT_CLASS } from "../../constants/styles";
 import { AUTOSAVE_DELAY_MS, TRASH_ICONS, TRASH_ICON_LABELS } from "../../constants/schedule";
 import { useSchedule } from "../../hooks/useSchedule";
@@ -109,13 +109,19 @@ function EntryRow({ entry, onNameChange, onIconChange, onRuleChange, onRemove }:
   );
 }
 
-export function ScheduleEditor() {
+function useAutosaveEntries() {
   const { schedule, saveSchedule } = useSchedule();
   const [entries, setEntries] = useState<ScheduleEntry[]>([]);
   const [lastSavedEntries, setLastSavedEntries] = useState<ScheduleEntry[]>([]);
   const { showSavedFeedback } = useSaveFeedback();
+  const isSelfSaveRef = useRef(false);
 
   useEffect(() => {
+    if (isSelfSaveRef.current) {
+      // eslint-disable-next-line functional/immutable-data -- reset ref after self-initiated save
+      isSelfSaveRef.current = false;
+      return;
+    }
     setLastSavedEntries(schedule.entries);
     setEntries(schedule.entries);
   }, [schedule]);
@@ -124,16 +130,30 @@ export function ScheduleEditor() {
     if (entries === lastSavedEntries) return;
 
     const timer = setTimeout(() => {
-      void saveSchedule({ version: SCHEDULE_VERSION, entries }).then(() => {
-        setLastSavedEntries(entries);
-        showSavedFeedback();
-      });
+      // eslint-disable-next-line functional/immutable-data -- mark self-save to skip sync overwrite
+      isSelfSaveRef.current = true;
+      void saveSchedule({ version: SCHEDULE_VERSION, entries }).then(
+        () => {
+          setLastSavedEntries(entries);
+          showSavedFeedback();
+        },
+        () => {
+          // eslint-disable-next-line functional/immutable-data -- reset flag on save failure
+          isSelfSaveRef.current = false;
+        },
+      );
     }, AUTOSAVE_DELAY_MS);
 
     return () => {
       clearTimeout(timer);
     };
   }, [entries, lastSavedEntries, saveSchedule, showSavedFeedback]);
+
+  return [entries, setEntries] as const;
+}
+
+export function ScheduleEditor() {
+  const [entries, setEntries] = useAutosaveEntries();
 
   const updateEntry = (id: string, updater: (e: ScheduleEntry) => ScheduleEntry) => {
     setEntries((prev) => prev.map((e) => (e.id === id ? updater(e) : e)));

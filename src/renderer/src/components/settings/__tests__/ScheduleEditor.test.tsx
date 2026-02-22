@@ -102,4 +102,34 @@ describe("ScheduleEditor", () => {
       expect(window.electronAPI.saveSchedule).toHaveBeenCalled();
     });
   });
+
+  it("自動保存のIPC完了後にユーザーの入力が失われない", async () => {
+    const SAVE_DELAY = 100;
+    vi.mocked(window.electronAPI.saveSchedule).mockImplementation(async () => {
+      // eslint-disable-next-line promise/avoid-new -- delayed mock required for race condition test
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, SAVE_DELAY);
+      });
+    });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    renderScheduleEditor();
+
+    await screen.findByDisplayValue("燃えるゴミ");
+
+    const input = screen.getByDisplayValue("燃えるゴミ");
+    await user.clear(input);
+    await user.type(input, "A");
+
+    vi.advanceTimersByTime(AUTOSAVE_DELAY_MS);
+
+    await user.type(input, "B");
+    expect(screen.getByDisplayValue("AB")).toBeInTheDocument();
+
+    vi.advanceTimersByTime(SAVE_DELAY);
+    await waitFor(() => {
+      expect(window.electronAPI.saveSchedule).toHaveBeenCalled();
+    });
+
+    expect(screen.getByDisplayValue("AB")).toBeInTheDocument();
+  });
 });
