@@ -82,11 +82,12 @@ function CalendarCell({ day }: { readonly day: CalendarDay }) {
     <div className={getCellStyle(day)}>
       <div className={getDayNumberStyle(day)}>{day.dayOfMonth}</div>
       {day.entries.length > 0 && (
-        <div className="mt-0.5 flex flex-wrap gap-px">
+        <div className="mt-0.5 flex flex-col">
           {day.entries.map((entry) => (
             <Tooltip key={entry.id} label={entry.trash.name} position="bottom">
-              <span className="cursor-default text-xs leading-tight">
-                {(TRASH_ICONS[entry.trash.icon] as string | undefined) ?? ""}
+              <span className="flex cursor-default items-center gap-0.5 text-[10px] leading-tight">
+                <span>{(TRASH_ICONS[entry.trash.icon] as string | undefined) ?? ""}</span>
+                <span className="truncate text-frost-text-secondary">{entry.trash.name}</span>
               </span>
             </Tooltip>
           ))}
