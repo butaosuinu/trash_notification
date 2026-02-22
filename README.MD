@@ -6,7 +6,10 @@
 
 - 今日のゴミ収集情報をダッシュボードで表示
 - 週間スケジュール表示（日〜土）
+- 月間カレンダー表示（月ごとのゴミ収集スケジュール）
+- 通知設定（ゴミ出しリマインダー通知）
 - トレイ常駐（ウィンドウを閉じてもバックグラウンドで動作）
+- 自動アップデート機能
 - Google Gemini API による PDF スケジュール自動解析・取り込み
 - 4 種類のスケジュールルール対応（毎週 / 隔週 / 第 N 週 / 特定日）
 - 12 種類のゴミカテゴリアイコン（燃えるゴミ、不燃ゴミ、資源、プラ、ビン、缶、紙、布、粗大、有害、電池、その他）
@@ -19,6 +22,7 @@
 - [Tailwind CSS 4](https://tailwindcss.com/) — スタイリング
 - [@google/genai](https://www.npmjs.com/package/@google/genai) — Gemini API による PDF 解析
 - [electron-store](https://github.com/sindresorhus/electron-store) — データ永続化
+- [electron-updater](https://www.electron.build/auto-update) — 自動アップデート
 - [date-fns](https://date-fns.org/) — 日付処理
 
 ## 必要環境
@@ -61,16 +65,18 @@ PDF スケジュール解析機能を使うには Google Gemini API キーが必
 src/
 ├── main/               # Main プロセス
 │   ├── index.ts        #   アプリ起動、ウィンドウ・トレイ作成
-│   ├── ipc/            #   IPC ハンドラー（スケジュール CRUD、Gemini API）
-│   └── services/       #   electron-store、Gemini サービス
+│   ├── ipc/            #   IPC ハンドラー（スケジュール、Gemini、通知、アップデート）
+│   └── services/       #   electron-store、Gemini、通知、アップデートサービス
 ├── preload/            # Preload（contextBridge で IPC を安全に公開）
 │   └── index.ts
+├── shared/             # プロセス間共有コード（型定義、定数、ユーティリティ）
 └── renderer/           # Renderer（React UI）
     └── src/
-        ├── components/ #   Dashboard / Settings 画面
-        ├── hooks/      #   useSchedule, useDateTime, useGeminiImport
+        ├── components/ #   Dashboard / Calendar / Settings / 共通コンポーネント
+        ├── hooks/      #   useSchedule, useDateTime, useGeminiImport, useNotificationSettings 等
         ├── stores/     #   Jotai atoms
         ├── types/      #   型定義
+        ├── constants/  #   定数
         └── utils/      #   日付ユーティリティ、スケジュールマッチング
 ```
 
