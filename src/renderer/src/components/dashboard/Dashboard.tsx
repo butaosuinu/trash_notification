@@ -1,5 +1,5 @@
 import { addDays } from "date-fns";
-import { Settings } from "lucide-react";
+import { CalendarDays, Settings } from "lucide-react";
 import { ICON_SIZE } from "../../constants/styles";
 import { useDateTime } from "../../hooks/useDateTime";
 import { useSchedule } from "../../hooks/useSchedule";
@@ -12,10 +12,11 @@ import { WeeklySchedule } from "./WeeklySchedule";
 const TOMORROW_OFFSET = 1;
 
 type DashboardProps = {
+  onOpenCalendar: () => void;
   onOpenSettings: () => void;
 };
 
-export function Dashboard({ onOpenSettings }: DashboardProps) {
+export function Dashboard({ onOpenCalendar, onOpenSettings }: DashboardProps) {
   const { schedule } = useSchedule();
   const now = useDateTime();
   const tomorrow = addDays(now, TOMORROW_OFFSET);
@@ -29,7 +30,13 @@ export function Dashboard({ onOpenSettings }: DashboardProps) {
           <h1 className="font-heading text-2xl font-bold text-frost-text">ゴミ通知</h1>
           <span className="text-xs text-frost-text-secondary">{formatTitlebarDate(now)}</span>
         </div>
-        <div className="titlebar-no-drag">
+        <div className="titlebar-no-drag flex items-center gap-2">
+          <IconButton
+            variant="nav"
+            onClick={onOpenCalendar}
+            icon={<CalendarDays size={ICON_SIZE} />}
+            label="カレンダー"
+          />
           <IconButton
             variant="nav"
             onClick={onOpenSettings}

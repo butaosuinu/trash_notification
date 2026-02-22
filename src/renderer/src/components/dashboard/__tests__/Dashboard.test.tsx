@@ -38,7 +38,7 @@ describe("Dashboard", () => {
   it("スケジュールを読み込んで今日のゴミを表示する", async () => {
     render(
       <Provider>
-        <Dashboard onOpenSettings={vi.fn()} />
+        <Dashboard onOpenCalendar={vi.fn()} onOpenSettings={vi.fn()} />
       </Provider>,
     );
 
@@ -54,7 +54,7 @@ describe("Dashboard", () => {
 
     render(
       <Provider>
-        <Dashboard onOpenSettings={vi.fn()} />
+        <Dashboard onOpenCalendar={vi.fn()} onOpenSettings={vi.fn()} />
       </Provider>,
     );
 
@@ -65,7 +65,7 @@ describe("Dashboard", () => {
   it("タイトルバーに日時が表示される", async () => {
     render(
       <Provider>
-        <Dashboard onOpenSettings={vi.fn()} />
+        <Dashboard onOpenCalendar={vi.fn()} onOpenSettings={vi.fn()} />
       </Provider>,
     );
 
@@ -78,7 +78,7 @@ describe("Dashboard", () => {
 
     render(
       <Provider>
-        <Dashboard onOpenSettings={onOpenSettings} />
+        <Dashboard onOpenCalendar={vi.fn()} onOpenSettings={onOpenSettings} />
       </Provider>,
     );
 
