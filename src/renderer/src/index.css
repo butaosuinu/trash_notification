@@ -1,7 +1,7 @@
-@import '@fontsource-variable/m-plus-1';
-@import '@fontsource-variable/outfit';
+@import "@fontsource-variable/m-plus-1";
+@import "@fontsource-variable/outfit";
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* ──────────────────────────────────────────────
    Tailwind v4 @theme: extend the design system
@@ -22,8 +22,8 @@
   --color-frost-input-bg: rgba(255, 255, 255, 0.05);
   --color-frost-input-border: rgba(255, 255, 255, 0.1);
 
-  --font-heading: 'Outfit Variable', sans-serif;
-  --font-body: 'M PLUS 1 Variable', sans-serif;
+  --font-heading: "Outfit Variable", sans-serif;
+  --font-body: "M PLUS 1 Variable", sans-serif;
 
   --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
   --animate-fade-in: fade-in 0.2s ease-out;
@@ -107,8 +107,8 @@
   }
 
   select,
-  input[type='date'],
-  input[type='time'] {
+  input[type="date"],
+  input[type="time"] {
     color-scheme: dark;
   }
 }
@@ -151,11 +151,7 @@
   }
 
   .glass-titlebar {
-    background: linear-gradient(
-      180deg,
-      rgba(11, 17, 32, 0.85) 0%,
-      rgba(15, 23, 42, 0.75) 100%
-    );
+    background: linear-gradient(180deg, rgba(11, 17, 32, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(20px) saturate(1.2);
     -webkit-backdrop-filter: blur(20px) saturate(1.2);

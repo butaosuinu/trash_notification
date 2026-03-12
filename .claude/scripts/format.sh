@@ -9,11 +9,8 @@ fi
 ext="${file_path##*.}"
 
 case "$ext" in
-  ts|tsx|js|jsx)
+  ts|tsx|js|jsx|css)
     pnpm exec oxfmt "$file_path" --write 2>/dev/null
-    ;;
-  css)
-    pnpm exec prettier --write "$file_path" 2>/dev/null
     ;;
 esac
 

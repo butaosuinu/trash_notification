@@ -14,7 +14,7 @@ pnpm run build            # Production build
 pnpm run check            # Run format:check + lint + test:run (full CI check)
 pnpm run lint             # oxlint src && eslint src
 pnpm run lint:fix         # oxlint src --fix && eslint src --fix
-pnpm run format           # oxfmt src --write && prettier --write 'src/**/*.css'
+pnpm run format           # oxfmt src --write
 pnpm run typecheck        # tsc --noEmit
 pnpm run test             # vitest (watch mode)
 pnpm run test:run         # vitest run (single run)
@@ -63,7 +63,7 @@ type TrashSchedule = { version: 2; entries: ScheduleEntry[] };
 ## Code Style & Linting
 
 - **Linters**: Oxlint (primary, Rust-based) + ESLint with `eslint-config-love` + `eslint-plugin-functional`
-- **Formatters**: Oxfmt for TS/TSX, Prettier for CSS only
+- **Formatters**: Oxfmt for TS/TSX/CSS
 - **Preload must output as CJS** (configured in `electron.vite.config.ts`) — changing this causes white screen
 - Use `type` keyword instead of `interface` (ESLint rule)
 - No magic numbers except 0 and 1
