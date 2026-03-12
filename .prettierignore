@@ -1,7 +1,0 @@
-node_modules/
-dist/
-out/
-*.ts
-*.tsx
-*.js
-*.jsx
