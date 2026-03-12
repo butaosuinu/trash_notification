@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Electron desktop app for Japanese trash/garbage collection reminders (ゴミ出し通知). Built with Electron 35 + React 19 + TypeScript 5.8 + Vite 6. Uses Google Gemini 3 Flash API to parse PDF schedules into structured data.
+Electron desktop app for Japanese trash/garbage collection reminders (ゴミ出し通知). Built with Electron 35 + React 19 + TypeScript 5.8 + Vite 7. Uses Google Gemini 3 Flash API to parse PDF schedules into structured data.
 
 ## Commands
 
