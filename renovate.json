@@ -1,0 +1,153 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":timezone(Asia/Tokyo)",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(chore)",
+    "schedule:earlyMondays",
+    "group:monorepos",
+    "group:recommended",
+    ":automergeDigest",
+    ":automergePatch"
+  ],
+  "labels": ["dependencies"],
+  "rangeStrategy": "auto",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 9am on the first day of the month"]
+  },
+  "packageRules": [
+    {
+      "description": "Electron ecosystem (minor/patch - auto-merge)",
+      "groupName": "electron",
+      "matchPackageNames": [
+        "electron",
+        "electron-vite",
+        "electron-builder",
+        "electron-log",
+        "electron-store",
+        "electron-updater"
+      ],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Electron major updates - require manual review",
+      "groupName": "electron-major",
+      "matchPackageNames": [
+        "electron",
+        "electron-vite",
+        "electron-builder",
+        "electron-log",
+        "electron-store",
+        "electron-updater"
+      ],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "breaking-change"],
+      "prPriority": -1
+    },
+    {
+      "description": "React core",
+      "groupName": "react",
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Vite build toolchain",
+      "groupName": "vite",
+      "matchPackageNames": [
+        "vite",
+        "@vitejs/plugin-react",
+        "electron-vite"
+      ],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Testing infrastructure",
+      "groupName": "testing",
+      "matchPackageNames": [
+        "vitest",
+        "@vitest/coverage-v8",
+        "happy-dom"
+      ],
+      "matchPackagePatterns": ["^@testing-library/"],
+      "automerge": true
+    },
+    {
+      "description": "ESLint ecosystem",
+      "groupName": "eslint",
+      "matchPackageNames": [
+        "eslint",
+        "typescript-eslint"
+      ],
+      "matchPackagePatterns": ["^eslint-config-", "^eslint-plugin-"],
+      "excludePackageNames": ["eslint-plugin-oxlint"],
+      "automerge": true
+    },
+    {
+      "description": "Tailwind CSS",
+      "groupName": "tailwind",
+      "matchPackageNames": [
+        "tailwindcss"
+      ],
+      "matchPackagePatterns": ["^@tailwindcss/"],
+      "automerge": true
+    },
+    {
+      "description": "Oxc toolchain",
+      "groupName": "oxc",
+      "matchPackageNames": [
+        "oxlint",
+        "oxfmt",
+        "eslint-plugin-oxlint"
+      ],
+      "automerge": true
+    },
+    {
+      "description": "Font packages",
+      "groupName": "fontsource",
+      "matchPackagePatterns": ["^@fontsource-variable/"],
+      "automerge": true
+    },
+    {
+      "description": "TypeScript - respect tilde pin",
+      "matchPackageNames": ["typescript"],
+      "rangeStrategy": "replace",
+      "automerge": true
+    },
+    {
+      "description": "GitHub Actions minor/patch - auto-merge",
+      "groupName": "github-actions",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "GitHub Actions major - manual review",
+      "groupName": "github-actions-major",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Non-major dev dependencies - auto-merge",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Patch production updates - auto-merge",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    }
+  ]
+}
